@@ -1,0 +1,28 @@
+PODS:
+  - Alamofire (3.3.1)
+  - MBProgressHUD (0.9.2)
+  - MZPushModalView (0.1.0)
+  - SnapKit (0.20.0)
+  - SwiftyJSON (2.3.2)
+  - SWXMLHash (2.3.1)
+  - UIColor_Hex_Swift (2.1)
+
+DEPENDENCIES:
+  - Alamofire
+  - MBProgressHUD
+  - MZPushModalView
+  - SnapKit
+  - SwiftyJSON
+  - SWXMLHash
+  - UIColor_Hex_Swift
+
+SPEC CHECKSUMS:
+  Alamofire: 369bc67b6f5ac33ded3648d7bd21c5bfb91c2ecc
+  MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
+  MZPushModalView: 82394824cd11d6cffafea0d52d8f588fc1bbd2c6
+  SnapKit: 5fce3c1bbbf1fbd31de9aa92f33eb9fa03f15650
+  SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
+  SWXMLHash: 795c66e74f4cc9473ad6465c6653c5a6f59f417e
+  UIColor_Hex_Swift: e91dc51f6bf252ec7bf74c8704ceedeeb7640c1c
+
+COCOAPODS: 0.39.0
