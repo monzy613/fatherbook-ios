@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		78C2D13C13B3CD629C8DBFD3 /* Pods_fatherbook_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02D99B3509210E97355FA0D9 /* Pods_fatherbook_ios.framework */; };
 		F4B654D61CDEE2DA00E3ED5E /* FBApiURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B654D51CDEE2DA00E3ED5E /* FBApiURL.swift */; };
-		F4B654D81CDEE2F300E3ED5E /* FBAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B654D71CDEE2F300E3ED5E /* FBAppConstants.swift */; };
+		F4B654D81CDEE2F300E3ED5E /* FBConsts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B654D71CDEE2F300E3ED5E /* FBConsts.swift */; };
 		F4B654DA1CDEE31400E3ED5E /* FBApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B654D91CDEE31400E3ED5E /* FBApi.swift */; };
 		F4B654DC1CDEF0C600E3ED5E /* FBLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B654DB1CDEF0C600E3ED5E /* FBLoginViewController.swift */; };
 		F4B654E01CDF82BB00E3ED5E /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = F4B654DF1CDF82BB00E3ED5E /* config.plist */; };
@@ -23,7 +23,7 @@
 		94B1D7553F513673FB5B8868 /* Pods-fatherbook-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fatherbook-ios.release.xcconfig"; path = "Pods/Target Support Files/Pods-fatherbook-ios/Pods-fatherbook-ios.release.xcconfig"; sourceTree = "<group>"; };
 		A75138C02AAE24340CAE4A86 /* Pods-fatherbook-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fatherbook-ios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-fatherbook-ios/Pods-fatherbook-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		F4B654D51CDEE2DA00E3ED5E /* FBApiURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBApiURL.swift; sourceTree = "<group>"; };
-		F4B654D71CDEE2F300E3ED5E /* FBAppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBAppConstants.swift; sourceTree = "<group>"; };
+		F4B654D71CDEE2F300E3ED5E /* FBConsts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBConsts.swift; sourceTree = "<group>"; };
 		F4B654D91CDEE31400E3ED5E /* FBApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBApi.swift; sourceTree = "<group>"; };
 		F4B654DB1CDEF0C600E3ED5E /* FBLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBLoginViewController.swift; sourceTree = "<group>"; };
 		F4B654DF1CDF82BB00E3ED5E /* config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
@@ -67,7 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				F4D2420B1CDE76F8000D45FA /* AppDelegate.swift */,
-				F4B654D71CDEE2F300E3ED5E /* FBAppConstants.swift */,
+				F4B654D71CDEE2F300E3ED5E /* FBConsts.swift */,
 			);
 			name = App;
 			sourceTree = "<group>";
@@ -255,7 +255,7 @@
 				F4B654DA1CDEE31400E3ED5E /* FBApi.swift in Sources */,
 				F4B654D61CDEE2DA00E3ED5E /* FBApiURL.swift in Sources */,
 				F4D2420C1CDE76F8000D45FA /* AppDelegate.swift in Sources */,
-				F4B654D81CDEE2F300E3ED5E /* FBAppConstants.swift in Sources */,
+				F4B654D81CDEE2F300E3ED5E /* FBConsts.swift in Sources */,
 				F4B654DC1CDEF0C600E3ED5E /* FBLoginViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

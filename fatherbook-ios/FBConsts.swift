@@ -1,5 +1,5 @@
 //
-//  FBAppConstants.swift
+//  FBConsts.swift
 //  fatherbook-ios
 //
 //  Created by 张逸 on 16/5/8.

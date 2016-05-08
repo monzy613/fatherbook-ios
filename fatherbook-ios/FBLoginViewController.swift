@@ -9,6 +9,7 @@
 import UIKit
 import SnapKit
 import MZPushModalView
+import MBProgressHUD
 import UIColor_Hex_Swift
 
 private let inputAreaEdgeOffset: CGFloat = 20.0
@@ -23,6 +24,7 @@ class FBLoginViewController: UIViewController {
     var inputContainerView: UIView!
     var accountTextField: UITextField!
     var passwordTextField: UITextField!
+    var loginIndicator: UIActivityIndicatorView!
     var loginButton: UIButton!
     var registerButton: UIButton!
     var registerPushModalView: MZPushModalView!
@@ -78,24 +80,33 @@ class FBLoginViewController: UIViewController {
         inputContainerView.layer.addSublayer(lineLayer)
 
         accountTextField = UITextField()
+        accountTextField.keyboardType = .ASCIICapable
+        accountTextField.font = UIFont.systemFontOfSize(14)
         accountTextField.placeholder = accountPlaceholder
 
         passwordTextField = UITextField()
+        passwordTextField.secureTextEntry = true
+        passwordTextField.font = UIFont.systemFontOfSize(14)
         passwordTextField.placeholder = passwordPlaceholder
 
         loginButton = UIButton(type: .System)
+        loginButton.titleLabel?.font = UIFont.systemFontOfSize(14)
+        loginButton.addTarget(self, action: #selector(login), forControlEvents: .TouchUpInside)
         loginButton.layer.cornerRadius = 4.0
         loginButton.setTitle(loginButtonTitle, forState: .Normal)
         loginButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         loginButton.backgroundColor = UIColor(rgba: "#B8B0B029")
+        loginIndicator = UIActivityIndicatorView(activityIndicatorStyle: .White)
 
         registerButton = UIButton(type: .System)
+        registerButton.titleLabel?.font = UIFont.systemFontOfSize(14)
         registerButton.addTarget(self, action: #selector(registerButtonPressed), forControlEvents: .TouchUpInside)
         registerButton.setTitle(registerButtonTitle, forState: .Normal)
         registerButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
 
 
         view.addSubview(inputContainerView)
+        view.addSubview(loginIndicator)
         inputContainerView.addSubview(accountTextField)
         inputContainerView.addSubview(passwordTextField)
         view.addSubview(loginButton)
@@ -141,6 +152,12 @@ class FBLoginViewController: UIViewController {
             make.left.right.equalTo(inputContainerView)
             make.top.equalTo(inputContainerView.snp_bottom).offset(5.0)
             make.height.equalTo(inputAreaHeight / 2)
+        }
+
+        loginIndicator.snp_makeConstraints { (make) in
+            make.centerY.height.equalTo(loginButton)
+            make.right.equalTo(loginButton).offset(-10)
+            make.width.equalTo(loginIndicator.snp_height)
         }
 
         registerButton.snp_makeConstraints { (make) in
@@ -223,9 +240,31 @@ class FBLoginViewController: UIViewController {
         }
     }
 
+    private func loginParameters() -> [String: AnyObject]? {
+        return [
+            kAccount: accountTextField.text!,
+            kPassword: passwordTextField.text!
+        ]
+    }
+
     // MARK: actions
     func endEditing() {
         view.endEditing(true)
+    }
+
+    func login(sender: UIButton) {
+        loginIndicator.startAnimating()
+        endEditing()
+        sender.enabled = false
+        FBApi.post(withURL: kFBApiLogin, parameters: loginParameters(), success: { (json) -> (Void) in
+            print("login json: \(json)")
+            self.loginIndicator.stopAnimating()
+            sender.enabled = true
+            }) { (error) -> (Void) in
+                print("login error: \(error)")
+                sender.enabled = true
+                self.loginIndicator.stopAnimating()
+        }
     }
 
     func registerButtonPressed(sender: UIButton) {
@@ -236,9 +275,9 @@ class FBLoginViewController: UIViewController {
 
     func submitRegister(sender: UIButton) {
         FBApi.post(withURL: kFBApiRegister, parameters: registerParameters(), success: { (json) -> (Void) in
-
+            print("register json: \(json)")
             }) { (error) -> (Void) in
-                print(error)
+                print("register error: \(error)")
         }
     }
 
