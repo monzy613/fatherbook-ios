@@ -2,7 +2,7 @@
 //  FBLoginViewController.swift
 //  fatherbook-ios
 //
-//  Created by 张逸 on 16/5/8.
+//  Created by Monzy Zhang on 16/5/8.
 //  Copyright © 2016年 MonzyZhang. All rights reserved.
 //
 
@@ -13,13 +13,19 @@ import MBProgressHUD
 import UIColor_Hex_Swift
 
 private let inputAreaEdgeOffset: CGFloat = 20.0
+private let textFieldOffset: CGFloat = 10.0
 private let inputAreaHeight: CGFloat = 80.0
 private let accountPlaceholder = "account"
 private let passwordPlaceholder = "password"
+private let confirmPasswordPlaceholder = "confirm password"
 private let loginButtonTitle = "login"
 private let registerButtonTitle = "register for son of alien"
+private let textFieldHeight: CGFloat = 40.0
 
-class FBLoginViewController: UIViewController {
+
+class FBLoginViewController: UIViewController, UITextFieldDelegate {
+    let defaultFont = UIFont(name: "Avenir-Light", size: 14)
+
     var logoView: UIImageView!
     var inputContainerView: UIView!
     var accountTextField: UITextField!
@@ -31,8 +37,11 @@ class FBLoginViewController: UIViewController {
 
     
     var registerView: UIView!
+    var registering = false
+    var rInputContainerView: UIView!
     var rAccountTextField: UITextField!
     var rPasswordTextField: UITextField!
+    var rPasswordConfirmTextField: UITextField!
     var cancelButton: UIButton!
     var submitButton: UIButton!
 
@@ -43,16 +52,36 @@ class FBLoginViewController: UIViewController {
         initUI()
     }
 
-    override func viewDidDisappear(animated: Bool) {
-        super.viewDidDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+
+    // MARK: UITextFieldDelegate
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        switch textField {
+        case accountTextField:
+            passwordTextField.becomeFirstResponder()
+        case passwordTextField:
+            login(loginButton)
+        case rAccountTextField:
+            rPasswordTextField.becomeFirstResponder()
+        case rPasswordTextField:
+            rPasswordConfirmTextField.becomeFirstResponder()
+        case rPasswordConfirmTextField:
+            submitRegister(submitButton)
+        default:
+            print("textfirldShoudReturn error in default")
+            break
+        }
+        return true
     }
 
     // MARK: private
     private func initObservers() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide), name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(textFieldDidChange), name: UITextFieldTextDidChangeNotification, object: nil)
     }
 
     private func initUI() {
@@ -79,18 +108,15 @@ class FBLoginViewController: UIViewController {
         lineLayer.lineCap = kCALineCapRound
         inputContainerView.layer.addSublayer(lineLayer)
 
-        accountTextField = UITextField()
+        accountTextField = FBViewGenerator.fbTextField(placeHolder: accountPlaceholder)
+        accountTextField.delegate = self
         accountTextField.keyboardType = .ASCIICapable
-        accountTextField.font = UIFont.systemFontOfSize(14)
-        accountTextField.placeholder = accountPlaceholder
 
-        passwordTextField = UITextField()
-        passwordTextField.secureTextEntry = true
-        passwordTextField.font = UIFont.systemFontOfSize(14)
-        passwordTextField.placeholder = passwordPlaceholder
+        passwordTextField = FBViewGenerator.fbTextField(placeHolder: passwordPlaceholder, secureTextEntry: true)
+        passwordTextField.delegate = self
 
         loginButton = UIButton(type: .System)
-        loginButton.titleLabel?.font = UIFont.systemFontOfSize(14)
+        loginButton.titleLabel?.font = defaultFont
         loginButton.addTarget(self, action: #selector(login), forControlEvents: .TouchUpInside)
         loginButton.layer.cornerRadius = 4.0
         loginButton.setTitle(loginButtonTitle, forState: .Normal)
@@ -99,7 +125,7 @@ class FBLoginViewController: UIViewController {
         loginIndicator = UIActivityIndicatorView(activityIndicatorStyle: .White)
 
         registerButton = UIButton(type: .System)
-        registerButton.titleLabel?.font = UIFont.systemFontOfSize(14)
+        registerButton.titleLabel?.font = defaultFont
         registerButton.addTarget(self, action: #selector(registerButtonPressed), forControlEvents: .TouchUpInside)
         registerButton.setTitle(registerButtonTitle, forState: .Normal)
         registerButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
@@ -137,8 +163,8 @@ class FBLoginViewController: UIViewController {
         }
 
         accountTextField.snp_makeConstraints { (make) in
-            make.left.equalTo(inputContainerView).offset(5.0)
-            make.right.equalTo(inputContainerView).offset(-5.0)
+            make.left.equalTo(inputContainerView).offset(textFieldOffset)
+            make.right.equalTo(inputContainerView).offset(-textFieldOffset)
             make.top.equalTo(inputContainerView)
             make.height.equalTo(inputContainerView).multipliedBy(0.5)
         }
@@ -171,61 +197,91 @@ class FBLoginViewController: UIViewController {
             return
         }
         registerView = UIView(frame: CGRectMake(0, 0, CGRectGetWidth(view.bounds), CGRectGetHeight(view.bounds) / 2))
+        registerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(endRegisterEditing)))
         let backgroundLayer = CAGradientLayer()
         backgroundLayer.colors = [UIColor(rgba: "#BBC1CC").CGColor, UIColor(rgba: "#010B21").CGColor]
         backgroundLayer.frame = view.bounds
         registerView.layer.addSublayer(backgroundLayer)
         registerView.frame = CGRectMake(0, view.center.y, CGRectGetWidth(view.bounds), CGRectGetHeight(view.bounds))
 
+        //rAccountTextField & rPasswordTextField & rPasswordConfirmTextField
+        rInputContainerView = UIView()
+        rInputContainerView.backgroundColor = UIColor.whiteColor()
+        rInputContainerView.layer.cornerRadius = 4.0
+        let separateLine = UIBezierPath()
+        separateLine.moveToPoint(CGPointMake(0, textFieldHeight))
+        separateLine.addLineToPoint(CGPointMake(CGRectGetWidth(registerView.bounds) - 2 * inputAreaEdgeOffset, textFieldHeight))
+        separateLine.moveToPoint(CGPointMake(0, textFieldHeight * 2))
+        separateLine.addLineToPoint(CGPointMake(CGRectGetWidth(registerView.bounds) - 2 * inputAreaEdgeOffset, textFieldHeight * 2))
+        let lineLayer = CAShapeLayer()
+        lineLayer.path = separateLine.CGPath
+        lineLayer.frame = CGRectMake(0, 0, CGRectGetWidth(registerView.bounds) - 2 * inputAreaEdgeOffset, textFieldHeight * 3)
+        lineLayer.strokeColor = UIColor.grayColor().CGColor
+        lineLayer.lineWidth = 0.3
+        lineLayer.lineCap = kCALineCapRound
+        rInputContainerView.layer.addSublayer(lineLayer)
 
-        let buttonWidth = CGRectGetWidth(view.bounds) / 7
+        rAccountTextField = FBViewGenerator.fbTextField(placeHolder: accountPlaceholder)
+        rAccountTextField.delegate = self
+        rAccountTextField.keyboardType = .ASCIICapable
+        rPasswordTextField = FBViewGenerator.fbTextField(placeHolder: passwordPlaceholder, secureTextEntry: true)
+        rPasswordTextField.delegate = self
+        rPasswordConfirmTextField = FBViewGenerator.fbTextField(placeHolder: confirmPasswordPlaceholder, secureTextEntry: true)
+        rPasswordConfirmTextField.delegate = self
+
+        rInputContainerView.addSubview(rAccountTextField)
+        rInputContainerView.addSubview(rPasswordTextField)
+        rInputContainerView.addSubview(rPasswordConfirmTextField)
+        registerView.addSubview(rInputContainerView)
+
         //dismiss button
-        let crossPath = UIBezierPath()
-        crossPath.moveToPoint(CGPointZero)
-        crossPath.addLineToPoint(CGPointMake(buttonWidth, buttonWidth))
-        crossPath.moveToPoint(CGPointMake(0, buttonWidth))
-        crossPath.addLineToPoint(CGPointMake(buttonWidth, 0))
-        let crossLayer = CAShapeLayer()
-        crossLayer.opacity = 0.5
-        crossLayer.frame = CGRectMake(0, 0, buttonWidth, buttonWidth)
-        crossLayer.path = crossPath.CGPath
-        crossLayer.lineCap = kCALineCapRound
-        crossLayer.strokeColor = UIColor.redColor().CGColor
-        crossLayer.fillColor = nil
-        crossLayer.lineWidth = buttonWidth / 3
         cancelButton = UIButton(type: .System)
-        cancelButton.layer.addSublayer(crossLayer)
+        cancelButton.setTitle("cancel", forState: .Normal)
         cancelButton.addTarget(self, action: #selector(cancelRegister), forControlEvents: .TouchUpInside)
+        cancelButton.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
+        cancelButton.titleLabel?.font = defaultFont
         registerView.addSubview(cancelButton)
-        cancelButton.snp_makeConstraints { (make) in
-            make.bottom.equalTo(registerView).offset(-buttonWidth / 2)
-            make.centerX.equalTo(registerView).offset(-buttonWidth * 1.5)
-            make.width.equalTo(buttonWidth)
-            make.height.equalTo(cancelButton.snp_width)
-        }
         //submit button
-        let tickPath = UIBezierPath()
-        tickPath.moveToPoint(CGPointMake(0, buttonWidth / 2))
-        tickPath.addLineToPoint(CGPointMake(buttonWidth / 3, buttonWidth))
-        tickPath.moveToPoint(CGPointMake(buttonWidth / 3, buttonWidth))
-        tickPath.addLineToPoint(CGPointMake(buttonWidth * 1.3, 0))
-        let tickLayer = CAShapeLayer()
-        tickLayer.opacity = 0.5
-        tickLayer.frame = CGRectMake(0, 0, buttonWidth, buttonWidth)
-        tickLayer.path = tickPath.CGPath
-        tickLayer.lineCap = kCALineCapRound
-        tickLayer.strokeColor = UIColor.whiteColor().CGColor
-        tickLayer.fillColor = nil
-        tickLayer.lineWidth = buttonWidth / 3
         submitButton = UIButton(type: .System)
-        submitButton.layer.addSublayer(tickLayer)
         submitButton.addTarget(self, action: #selector(submitRegister), forControlEvents: .TouchUpInside)
+        submitButton.setTitle("register", forState: .Normal)
+        submitButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        submitButton.titleLabel?.font = defaultFont
+        submitButton.layer.cornerRadius = 4.0
+        submitButton.backgroundColor = UIColor(rgba: "#B8B0B029")
         registerView.addSubview(submitButton)
+
+
+        //register view constraints
+        rInputContainerView.snp_makeConstraints { (make) in
+            make.left.equalTo(registerView).offset(inputAreaEdgeOffset)
+            make.right.equalTo(registerView).offset(-inputAreaEdgeOffset)
+            make.centerY.equalTo(registerView)
+            make.height.equalTo(textFieldHeight * 3)
+        }
+        rAccountTextField.snp_makeConstraints { (make) in
+            make.top.equalTo(rInputContainerView)
+            make.height.equalTo(textFieldHeight)
+            make.left.equalTo(rInputContainerView).offset(textFieldOffset)
+            make.right.equalTo(rInputContainerView).offset(-textFieldOffset)
+        }
+        rPasswordTextField.snp_makeConstraints { (make) in
+            make.top.equalTo(rAccountTextField.snp_bottom)
+            make.left.right.height.equalTo(rAccountTextField)
+        }
+        rPasswordConfirmTextField.snp_makeConstraints { (make) in
+            make.top.equalTo(rPasswordTextField.snp_bottom)
+            make.left.right.height.equalTo(rAccountTextField)
+        }
+
+        cancelButton.snp_makeConstraints { (make) in
+            make.bottom.equalTo(registerView).offset(-10)
+            make.centerX.equalTo(registerView)
+        }
         submitButton.snp_makeConstraints { (make) in
-            make.bottom.equalTo(registerView).offset(-buttonWidth / 2)
-            make.centerX.equalTo(registerView).offset(buttonWidth * 1.5)
-            make.width.equalTo(buttonWidth)
-            make.height.equalTo(cancelButton.snp_width)
+            make.left.right.equalTo(rInputContainerView)
+            make.height.equalTo(textFieldHeight)
+            make.bottom.equalTo(cancelButton.snp_top).offset(-10)
         }
     }
 
@@ -234,8 +290,8 @@ class FBLoginViewController: UIViewController {
             return nil
         } else {
             return [
-                kAccount: "monzy",
-                kPassword: "123456"
+                kAccount: rAccountTextField.text!,
+                kPassword: rPasswordTextField.text!
             ]
         }
     }
@@ -247,20 +303,59 @@ class FBLoginViewController: UIViewController {
         ]
     }
 
+    private func checkLogin() -> Bool {
+        if var account = accountTextField.text, var password = passwordTextField.text {
+            account = account.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+            password = password.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+            if account == "" || password == "" {
+                return false
+            } else {
+                return true
+            }
+        } else {
+            return false
+        }
+    }
+
     // MARK: actions
+    func textFieldDidChange(textField: UITextField) {
+    }
+
     func endEditing() {
         view.endEditing(true)
     }
 
+    func endRegisterEditing() {
+        registerView.endEditing(true)
+    }
+
     func login(sender: UIButton) {
-        loginIndicator.startAnimating()
+        if !checkLogin() {
+            MBProgressHUD.showErrorToView("Please enter account and password", rootView: view)
+            return
+        }
         endEditing()
+        loginIndicator.startAnimating()
         sender.enabled = false
         FBApi.post(withURL: kFBApiLogin, parameters: loginParameters(), success: { (json) -> (Void) in
             print("login json: \(json)")
             self.loginIndicator.stopAnimating()
             sender.enabled = true
+            if let status = json["status"].string {
+                print(json["userInfo"])
+                let isSuccess = (FBApi.statusCodeDictionary[status]![1] as? Bool) ?? false
+                if isSuccess {
+                    _ = FBUserInfo(json: json["userInfo"])
+                    MBProgressHUD.showSuccessToView((FBApi.statusCodeDictionary[status]![0] as! String) ?? "success", rootView: self.view)
+                    self.initRondCloud()
+                } else {
+                    MBProgressHUD.showErrorToView((FBApi.statusCodeDictionary[status]![0] as! String) ?? "error", rootView: self.view)
+                }
+            } else {
+                MBProgressHUD.showErrorToView("\(FBApi.statusCodeDictionary["000"]![0] ?? "error")", rootView: self.view)
+            }
             }) { (error) -> (Void) in
+                MBProgressHUD.showErrorToView("\(FBApi.statusCodeDictionary["000"]![0] ?? "error")", rootView: self.view)
                 print("login error: \(error)")
                 sender.enabled = true
                 self.loginIndicator.stopAnimating()
@@ -268,54 +363,135 @@ class FBLoginViewController: UIViewController {
     }
 
     func registerButtonPressed(sender: UIButton) {
+        registering = true
         endEditing()
         initRegisterView()
         registerPushModalView = MZPushModalView.showModalView(registerView, rootView: nil)
     }
 
     func submitRegister(sender: UIButton) {
-        FBApi.post(withURL: kFBApiRegister, parameters: registerParameters(), success: { (json) -> (Void) in
+        let parameters = registerParameters()
+        FBApi.post(withURL: kFBApiRegister, parameters: parameters, success: { (json) -> (Void) in
             print("register json: \(json)")
+            if let status = json["status"].string {
+                let isSuccess = (FBApi.statusCodeDictionary[status]![1] as? Bool) ?? false
+                if isSuccess {
+                    self.cancelRegister(self.cancelButton)
+                    MBProgressHUD.showSuccessToView((FBApi.statusCodeDictionary[status]![0] as! String) ?? "success", rootView: self.view)
+                    self.accountTextField.text = parameters![kAccount] as? String
+                    self.passwordTextField.text = parameters![kPassword] as? String
+                    self.login(self.loginButton)
+                } else {
+                    MBProgressHUD.showErrorToView((FBApi.statusCodeDictionary[status]![0] as! String) ?? "failed", rootView: self.view)
+                }
+            }
             }) { (error) -> (Void) in
                 print("register error: \(error)")
         }
     }
 
     func cancelRegister(sender: UIButton) {
+        endRegisterEditing()
+        registering = false
         registerPushModalView?.dismissModal()
     }
 
     // MARK: keyboard observers
     func keyboardWillShow(notification: NSNotification) {
         let keyboardHeight = notification.userInfo![UIKeyboardFrameBeginUserInfoKey]?.CGRectValue().height ?? 0.0
-        UIView.animateWithDuration(0.25) {
-            self.inputContainerView.snp_remakeConstraints(closure: { (make) in
-                make.left.equalTo(self.view).offset(inputAreaEdgeOffset)
-                make.right.equalTo(self.view).offset(-inputAreaEdgeOffset)
-                make.centerY.equalTo(self.view).offset(-keyboardHeight / 2)
-                make.height.equalTo(inputAreaHeight)
-            })
-            self.registerButton.snp_remakeConstraints(closure: { (make) in
-                make.bottom.equalTo(self.view).offset(-(10 + keyboardHeight))
-                make.centerX.equalTo(self.view)
-            })
-            self.view.layoutIfNeeded()
+        if registering {
+            UIView.animateWithDuration(0.25) {
+                self.rInputContainerView.snp_remakeConstraints(closure: { (make) in
+                    make.left.equalTo(self.registerView).offset(inputAreaEdgeOffset)
+                    make.right.equalTo(self.registerView).offset(-inputAreaEdgeOffset)
+                    make.centerY.equalTo(self.registerView).offset(-keyboardHeight / 2)
+                    make.height.equalTo(textFieldHeight * 3)
+                })
+                self.cancelButton.snp_remakeConstraints { (make) in
+                    make.bottom.equalTo(self.registerView).offset(-(10 + keyboardHeight))
+                    make.centerX.equalTo(self.registerView)
+                }
+                self.registerView.layoutIfNeeded()
+            }
+        } else {
+            UIView.animateWithDuration(0.25) {
+                self.inputContainerView.snp_remakeConstraints(closure: { (make) in
+                    make.left.equalTo(self.view).offset(inputAreaEdgeOffset)
+                    make.right.equalTo(self.view).offset(-inputAreaEdgeOffset)
+                    make.centerY.equalTo(self.view).offset(-keyboardHeight / 2)
+                    make.height.equalTo(inputAreaHeight)
+                })
+                self.registerButton.snp_remakeConstraints(closure: { (make) in
+                    make.bottom.equalTo(self.view).offset(-(10 + keyboardHeight))
+                    make.centerX.equalTo(self.view)
+                })
+                self.view.layoutIfNeeded()
+            }
         }
     }
 
     func keyboardWillHide(notification: NSNotification) {
-        UIView.animateWithDuration(0.25) {
-            self.inputContainerView.snp_remakeConstraints(closure: { (make) in
-                make.left.equalTo(self.view).offset(inputAreaEdgeOffset)
-                make.right.equalTo(self.view).offset(-inputAreaEdgeOffset)
-                make.centerY.equalTo(self.view)
-                make.height.equalTo(inputAreaHeight)
-            })
-            self.registerButton.snp_remakeConstraints(closure: { (make) in
-                make.bottom.equalTo(self.view).offset(-10)
-                make.centerX.equalTo(self.view)
-            })
-            self.view.layoutIfNeeded()
+        if registering {
+            UIView.animateWithDuration(0.25) {
+                self.rInputContainerView.snp_remakeConstraints(closure: { (make) in
+                    make.left.equalTo(self.registerView).offset(inputAreaEdgeOffset)
+                    make.right.equalTo(self.registerView).offset(-inputAreaEdgeOffset)
+                    make.centerY.equalTo(self.registerView)
+                    make.height.equalTo(textFieldHeight * 3)
+                })
+                self.cancelButton.snp_remakeConstraints { (make) in
+                    make.bottom.equalTo(self.registerView).offset(-10)
+                    make.centerX.equalTo(self.registerView)
+                }
+                self.registerView.layoutIfNeeded()
+            }
+        } else {
+            UIView.animateWithDuration(0.25) {
+                self.inputContainerView.snp_remakeConstraints(closure: { (make) in
+                    make.left.equalTo(self.view).offset(inputAreaEdgeOffset)
+                    make.right.equalTo(self.view).offset(-inputAreaEdgeOffset)
+                    make.centerY.equalTo(self.view)
+                    make.height.equalTo(inputAreaHeight)
+                })
+                self.registerButton.snp_remakeConstraints(closure: { (make) in
+                    make.bottom.equalTo(self.view).offset(-10)
+                    make.centerX.equalTo(self.view)
+                })
+                self.view.layoutIfNeeded()
+            }
         }
+    }
+
+    // MARK: RondCloud
+    func initRondCloud() {
+        RCIM.sharedRCIM().initWithAppKey(FBConsts.sharedInstance.kRongCloudAppKey)
+        guard let token = FBUserInfo.sharedUser.rcToken else {
+            return
+        }
+        RCIM.sharedRCIM().connectWithToken(
+            token,
+            success: { (userId) -> Void in
+                print("登陆成功。当前登录的用户ID：\(userId)")
+                //新建一个聊天会话View Controller对象
+                let chat = RCConversationViewController()
+                //设置会话的类型，如单聊、讨论组、群聊、聊天室、客服、公众服务会话等
+                chat.conversationType = RCConversationType.ConversationType_PRIVATE
+                //设置会话的目标会话ID。（单聊、客服、公众服务会话为对方的ID，讨论组、群聊、聊天室为会话的ID）
+                chat.targetId = "adm"
+                //设置聊天会话界面要显示的标题
+                chat.title = "RCTEST"
+                //显示聊天会话界面
+                dispatch_async(dispatch_get_main_queue(), {
+                    //self.presentViewController(chat, animated: true, completion: nil)
+                    self.presentViewController(FBPageViewController(), animated: true, completion: nil)
+                })
+            }, error: { (status) -> Void in
+                print("登陆的错误码为:\(status.rawValue)")
+            }, tokenIncorrect: {
+                //token过期或者不正确。
+                //如果设置了token有效期并且token过期，请重新请求您的服务器获取新的token
+                //如果没有设置token有效期却提示token错误，请检查您客户端和服务器的appkey是否匹配，还有检查您获取token的流程。
+                print("token错误")
+        })
     }
 }

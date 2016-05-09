@@ -11,6 +11,9 @@ target 'fatherbook-ios' do
 	pod 'SnapKit'
 	pod 'MZPushModalView'
 
+	#RongCloud
+	pod 'RongCloudIMKit'
+
 	#Extensions
 	pod 'UIColor_Hex_Swift'
 end

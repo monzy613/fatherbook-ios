@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  fatherbook-ios
 //
-//  Created by 张逸 on 16/5/8.
+//  Created by Monzy Zhang on 16/5/8.
 //  Copyright © 2016年 MonzyZhang. All rights reserved.
 //
 
