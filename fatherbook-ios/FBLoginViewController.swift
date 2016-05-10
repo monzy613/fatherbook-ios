@@ -6,6 +6,8 @@
 //  Copyright © 2016年 MonzyZhang. All rights reserved.
 //
 
+import RRFPSBar
+
 import UIKit
 import SnapKit
 import MZPushModalView
@@ -21,7 +23,6 @@ private let confirmPasswordPlaceholder = "confirm password"
 private let loginButtonTitle = "login"
 private let registerButtonTitle = "register for son of alien"
 private let textFieldHeight: CGFloat = 40.0
-
 
 class FBLoginViewController: UIViewController, UITextFieldDelegate {
     let defaultFont = UIFont(name: "Avenir-Light", size: 14)
@@ -50,6 +51,11 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         initObservers()
         initUI()
+    }
+
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        RRFPSBar.sharedInstance().hidden = false
     }
 
     override func viewWillDisappear(animated: Bool) {

@@ -16,4 +16,8 @@ target 'fatherbook-ios' do
 
 	#Extensions
 	pod 'UIColor_Hex_Swift'
+
+	#Test
+	pod 'RRFPSBar'
+	pod 'Reveal-iOS-SDK'
 end

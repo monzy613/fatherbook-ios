@@ -12,19 +12,19 @@ import SnapKit
 class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource {
 
     // MARK: views
-    var topTabBar: UIView!
+    var pageHeader: FBPageHeaderView!
     var topTabLayer: CAGradientLayer!
 
+    let statusBarHeight: CGFloat = 20.0
+    var openHeaderPropotion: CGFloat = 0.15
 
-    var tabBarPropotion: CGFloat = 0.15
 
-
-    var tabBarHeight: CGFloat {
-        return tabBarPropotion * CGRectGetHeight(view.bounds)
+    var openHeaderHeight: CGFloat {
+        return openHeaderPropotion * CGRectGetHeight(view.bounds)
     }
 
     var contentViewHeight: CGFloat {
-        return CGRectGetHeight(view.bounds) - tabBarHeight
+        return CGRectGetHeight(view.bounds) - openHeaderHeight
     }
 
 
@@ -47,31 +47,19 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
     }
 
     func initSubviews() {
-        topTabBar = UIView()
-        topTabLayer = CAGradientLayer()
-        topTabLayer.colors = [UIColor(rgba: "#BBC1CC").CGColor, UIColor(rgba: "#010B21").CGColor]
-        topTabLayer.frame = CGRectMake(0, 0, CGRectGetWidth(view.bounds), tabBarHeight)
-        topTabBar.layer.addSublayer(topTabLayer)
-        view.addSubview(topTabBar)
-        setupConstraints()
-    }
-
-    func setupConstraints() {
-        topTabBar.snp_makeConstraints { (make) in
-            make.left.top.right.equalTo(view)
-            make.height.equalTo(tabBarHeight)
-        }
+        pageHeader = FBPageHeaderView(width: CGRectGetWidth(view.bounds), openHeight: openHeaderHeight)
+        view.addSubview(pageHeader)
     }
 
     func pageViewController(pageViewController: UIPageViewController, viewControllerBeforeViewController viewController: UIViewController) -> UIViewController? {
         let tsView = FBLoginViewController()
-        tsView.view.frame = CGRectMake(0, tabBarHeight, CGRectGetWidth(view.bounds), contentViewHeight)
+        tsView.view.frame = CGRectMake(0, openHeaderHeight + statusBarHeight, CGRectGetWidth(view.bounds), contentViewHeight)
         return FBLoginViewController()
     }
 
     func pageViewController(pageViewController: UIPageViewController, viewControllerAfterViewController viewController: UIViewController) -> UIViewController? {
         let tsView = FBLoginViewController()
-        tsView.view.frame = CGRectMake(0, tabBarHeight, CGRectGetWidth(view.bounds), contentViewHeight)
+        tsView.view.frame = CGRectMake(0, openHeaderHeight + statusBarHeight, CGRectGetWidth(view.bounds), contentViewHeight)
         return FBLoginViewController()
     }
 
@@ -80,7 +68,7 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
         let colors = [UIColor.blueColor(), UIColor.blackColor(), UIColor.redColor(), UIColor.yellowColor()]
         let index: Int = Int(arc4random() % 4)
         vc.view.backgroundColor = colors[index]
-        vc.view.frame = CGRectMake(0, tabBarHeight, CGRectGetWidth(view.bounds), contentViewHeight)
+        vc.view.frame = CGRectMake(0, openHeaderHeight + statusBarHeight, CGRectGetWidth(view.bounds), contentViewHeight)
         return vc
     }
 }

@@ -11,6 +11,7 @@
 		F410B5E81CE05F8C008D9D01 /* FBViewGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410B5E71CE05F8C008D9D01 /* FBViewGenerator.swift */; };
 		F410B5EC1CE07487008D9D01 /* MBProgressHUD_Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410B5EB1CE07487008D9D01 /* MBProgressHUD_Extensions.swift */; };
 		F410B5EF1CE0875F008D9D01 /* FBUserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410B5EE1CE0875F008D9D01 /* FBUserInfo.swift */; };
+		F4A10D801CE23D3A00DEC337 /* FBPageHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A10D7F1CE23D3A00DEC337 /* FBPageHeaderView.swift */; };
 		F4B654D61CDEE2DA00E3ED5E /* FBApiURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B654D51CDEE2DA00E3ED5E /* FBApiURL.swift */; };
 		F4B654D81CDEE2F300E3ED5E /* FBConsts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B654D71CDEE2F300E3ED5E /* FBConsts.swift */; };
 		F4B654DA1CDEE31400E3ED5E /* FBApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B654D91CDEE31400E3ED5E /* FBApi.swift */; };
@@ -30,6 +31,7 @@
 		F410B5EB1CE07487008D9D01 /* MBProgressHUD_Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MBProgressHUD_Extensions.swift; sourceTree = "<group>"; };
 		F410B5EE1CE0875F008D9D01 /* FBUserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBUserInfo.swift; sourceTree = "<group>"; };
 		F46E404C1CE0A5CF00A45442 /* fatherbook-ios-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fatherbook-ios-Bridging-Header.h"; sourceTree = "<group>"; };
+		F4A10D7F1CE23D3A00DEC337 /* FBPageHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBPageHeaderView.swift; sourceTree = "<group>"; };
 		F4B654D51CDEE2DA00E3ED5E /* FBApiURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBApiURL.swift; sourceTree = "<group>"; };
 		F4B654D71CDEE2F300E3ED5E /* FBConsts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBConsts.swift; sourceTree = "<group>"; };
 		F4B654D91CDEE31400E3ED5E /* FBApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBApi.swift; sourceTree = "<group>"; };
@@ -78,6 +80,14 @@
 				F410B5EE1CE0875F008D9D01 /* FBUserInfo.swift */,
 			);
 			name = Models;
+			sourceTree = "<group>";
+		};
+		F4A10D7E1CE23D1B00DEC337 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F4A10D7F1CE23D3A00DEC337 /* FBPageHeaderView.swift */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 		F4B654D01CDEE17700E3ED5E /* App */ = {
@@ -142,6 +152,7 @@
 		F4D2420A1CDE76F8000D45FA /* fatherbook-ios */ = {
 			isa = PBXGroup;
 			children = (
+				F4A10D7E1CE23D1B00DEC337 /* Views */,
 				F410B5ED1CE08746008D9D01 /* Models */,
 				F4B654D01CDEE17700E3ED5E /* App */,
 				F4B654D21CDEE1A300E3ED5E /* Controllers */,
@@ -278,6 +289,7 @@
 				F4B654D61CDEE2DA00E3ED5E /* FBApiURL.swift in Sources */,
 				F410B5EC1CE07487008D9D01 /* MBProgressHUD_Extensions.swift in Sources */,
 				F410B5E81CE05F8C008D9D01 /* FBViewGenerator.swift in Sources */,
+				F4A10D801CE23D3A00DEC337 /* FBPageHeaderView.swift in Sources */,
 				F4FB50101CE0D8CB00DE849D /* FBPageViewController.swift in Sources */,
 				F4D2420C1CDE76F8000D45FA /* AppDelegate.swift in Sources */,
 				F4B654D81CDEE2F300E3ED5E /* FBConsts.swift in Sources */,
