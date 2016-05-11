@@ -349,19 +349,20 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
             sender.enabled = true
             if let status = json["status"].string {
                 print(json["userInfo"])
-                let isSuccess = (FBApi.statusCodeDictionary[status]![1] as? Bool) ?? false
+                let outputInfo = FBApi.statusDescription(status).0
+                let isSuccess = FBApi.statusDescription(status).1
                 if isSuccess {
                     _ = FBUserInfo(json: json["userInfo"])
-                    MBProgressHUD.showSuccessToView((FBApi.statusCodeDictionary[status]![0] as! String) ?? "success", rootView: self.view)
+                    MBProgressHUD.showSuccessToView(outputInfo, rootView: self.view)
                     self.initRondCloud()
                 } else {
-                    MBProgressHUD.showErrorToView((FBApi.statusCodeDictionary[status]![0] as! String) ?? "error", rootView: self.view)
+                    MBProgressHUD.showErrorToView(outputInfo, rootView: self.view)
                 }
             } else {
-                MBProgressHUD.showErrorToView("\(FBApi.statusCodeDictionary["000"]![0] ?? "error")", rootView: self.view)
+                MBProgressHUD.showErrorToView(FBApi.statusDescription("000").0, rootView: self.view)
             }
             }) { (error) -> (Void) in
-                MBProgressHUD.showErrorToView("\(FBApi.statusCodeDictionary["000"]![0] ?? "error")", rootView: self.view)
+                MBProgressHUD.showErrorToView(FBApi.statusDescription("000").0, rootView: self.view)
                 print("login error: \(error)")
                 sender.enabled = true
                 self.loginIndicator.stopAnimating()
@@ -380,15 +381,16 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
         FBApi.post(withURL: kFBApiRegister, parameters: parameters, success: { (json) -> (Void) in
             print("register json: \(json)")
             if let status = json["status"].string {
-                let isSuccess = (FBApi.statusCodeDictionary[status]![1] as? Bool) ?? false
+                let outputInfo = FBApi.statusDescription(status).0
+                let isSuccess = FBApi.statusDescription(status).1
                 if isSuccess {
                     self.cancelRegister(self.cancelButton)
-                    MBProgressHUD.showSuccessToView((FBApi.statusCodeDictionary[status]![0] as! String) ?? "success", rootView: self.view)
+                    MBProgressHUD.showSuccessToView(outputInfo, rootView: self.view)
                     self.accountTextField.text = parameters![kAccount] as? String
                     self.passwordTextField.text = parameters![kPassword] as? String
                     self.login(self.loginButton)
                 } else {
-                    MBProgressHUD.showErrorToView((FBApi.statusCodeDictionary[status]![0] as! String) ?? "failed", rootView: self.view)
+                    MBProgressHUD.showErrorToView(outputInfo, rootView: self.view)
                 }
             }
             }) { (error) -> (Void) in

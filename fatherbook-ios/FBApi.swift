@@ -14,20 +14,33 @@ let kAccount = "account"
 let kPassword = "password"
 
 class FBApi {
-    static let statusCodeDictionary = [
-        "000": ["Network error", false],
-        "200": ["Login Success", true],
-        "210": ["Wrong password or account", false],
 
-        "300": ["验证码已发送", true],
-        "310": ["手机号已被注册", false],
-        "320": ["验证码正确", true],
-        "330": ["验证码不正确", false],
+    private static let statusDictionary = [
+        "000": ("Network error", false),
+        "200": ("Login Success", true),
+        "210": ("Wrong password or account", false),
 
-        "340": ["Register success", true],
-        "350": ["Register failed", false],
-        "370": ["Account exist", false]
+        "300": ("验证码已发送", true),
+        "310": ("手机号已被注册", false),
+        "320": ("验证码正确", true),
+        "330": ("验证码不正确", false),
+
+        "340": ("Register success", true),
+        "350": ("Register failed", false),
+        "370": ("Account exist", false),
+
+        "400": ("搜索成功", true),
+        "410": ("未找到符合条件的用户", false)
+
     ]
+
+    class func statusDescription(code: String) -> (String, Bool) {
+        let pair = statusDictionary[code]
+        if pair == nil {
+            return ("no such status code", false)
+        }
+        return (pair!.0, pair!.1)
+    }
 
     class func get(
         withURL url: String,

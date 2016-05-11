@@ -24,3 +24,7 @@ var kFBApiRegister: String {
 var kFBApiLogin: String {
     return "\(kFBBaseURL)/app.login"
 }
+
+var kFBApiSearchAccount: String {
+    return "\(kFBBaseURL)/app.search.account"
+}
