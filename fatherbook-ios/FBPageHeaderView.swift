@@ -16,6 +16,7 @@ protocol FBPageHeaderViewDelegate: class {
     func searchTextDidChange(headerView view: FBPageHeaderView, searchText: String)
     func searchTextDidReturn(headerView view: FBPageHeaderView, searchText: String)
     func willShowSearchTextField(headerView view: FBPageHeaderView)
+    func willDismissSearchTextField(headerView view: FBPageHeaderView)
     func timelineButtonPressed(headerView view: FBPageHeaderView)
     func chatButtonPressed(headerView view: FBPageHeaderView)
     func contactButtonPressed(headerView view: FBPageHeaderView)
@@ -36,7 +37,6 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     //search stuffs
     var searchToggled = false
     var searchTextField: UITextField!
-    var searchLayer: CALayer!
 
     var width: CGFloat = 0
     var closeHeight: CGFloat = 0
@@ -75,7 +75,7 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
 
     private func initSubviews() {
         pageTitleLabel = UILabel()
-        pageTitleLabel.font = UIFont(name: "Avenir-Light", size: 20)
+        pageTitleLabel.font = UIFont.fb_defaultFontOfSize(20)
         pageTitleLabel.textColor = UIColor.whiteColor()
         pageTitleLabel.text = "Timeline"
         searchButton = UIButton(type: .Custom)
@@ -103,21 +103,17 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         meButton.imageView?.contentMode = .ScaleAspectFit
         meButton.imageEdgeInsets = UIEdgeInsetsMake(5, 0, 3, 0)
         gradientBackground = CAGradientLayer()
-        gradientBackground.colors = [UIColor(rgba: "#BBC1CC").CGColor, UIColor(rgba: "#010B21").CGColor]
+        gradientBackground.colors = [UIColor.fb_lightColor().CGColor, UIColor.fb_darkColor().CGColor]
         gradientBackground.frame = bounds
 
         searchTextField = UITextField()
         searchTextField.delegate = self
-        searchTextField.font = UIFont(name: "Avenir-Light", size: 14)
+        searchTextField.font = UIFont.fb_defaultFontOfSize(14)
         searchTextField.placeholder = "Search for people"
         searchTextField.leftView = UIView(frame: CGRectMake(0, 0, 10, 0))
+        searchTextField.layer.cornerRadius = 4.0
+        searchTextField.backgroundColor = UIColor.whiteColor()
         searchTextField.leftViewMode = .Always
-
-        searchLayer = CALayer()
-        searchLayer.cornerRadius = 4.0
-        searchLayer.backgroundColor = UIColor.whiteColor().CGColor
-        searchLayer.frame = CGRectMake(0, 0, 0, 0.32 * openHeight)
-        searchTextField.layer.addSublayer(searchLayer)
 
         layer.addSublayer(gradientBackground)
         addSubview(pageTitleLabel)
@@ -179,6 +175,7 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
 
     private func toggleSearchStuffs() {
         if searchToggled {
+            delegate?.willDismissSearchTextField(headerView: self)
             UIView .animateWithDuration(0.25, animations: {
                 self.pageTitleLabel.alpha = 1.0
                 self.searchTextField.snp_remakeConstraints { (make) in
@@ -189,9 +186,9 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
                 }
                 self.layoutIfNeeded()
                 }, completion: { (finished) in
-                    self.searchLayer.frame = self.searchTextField.bounds
             })
         } else {
+            delegate?.willShowSearchTextField(headerView: self)
             UIView.animateWithDuration(0.25, animations: {
                 self.pageTitleLabel.alpha = 0.0
                 self.searchTextField.snp_remakeConstraints { (make) in
@@ -202,7 +199,6 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
                 }
                 self.layoutIfNeeded()
                 }, completion: { (finished) in
-                    self.searchLayer.frame = self.searchTextField.bounds
                     self.searchTextField.becomeFirstResponder()
             })
         }
@@ -212,7 +208,6 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     // MARK: actions
     func searchButtonPressed(sender: UIButton) {
         toggleSearchStuffs()
-        delegate?.willShowSearchTextField(headerView: self)
     }
 
     func timelineButtonPressed(sender: UIButton) {

@@ -6,13 +6,12 @@
 //  Copyright © 2016年 MonzyZhang. All rights reserved.
 //
 
-import RRFPSBar
-
 import UIKit
 import SnapKit
 import MZPushModalView
 import MBProgressHUD
 import UIColor_Hex_Swift
+import MZGoogleStyleButton
 
 private let inputAreaEdgeOffset: CGFloat = 20.0
 private let textFieldOffset: CGFloat = 10.0
@@ -25,17 +24,14 @@ private let registerButtonTitle = "register for son of alien"
 private let textFieldHeight: CGFloat = 40.0
 
 class FBLoginViewController: UIViewController, UITextFieldDelegate {
-    let defaultFont = UIFont(name: "Avenir-Light", size: 14)
-
     var logoView: UIImageView!
     var inputContainerView: UIView!
     var accountTextField: UITextField!
     var passwordTextField: UITextField!
     var loginIndicator: UIActivityIndicatorView!
-    var loginButton: UIButton!
+    var loginButton: MZGoogleStyleButton!
     var registerButton: UIButton!
     var registerPushModalView: MZPushModalView!
-
     
     var registerView: UIView!
     var registering = false
@@ -44,18 +40,13 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
     var rPasswordTextField: UITextField!
     var rPasswordConfirmTextField: UITextField!
     var cancelButton: UIButton!
-    var submitButton: UIButton!
+    var submitButton: MZGoogleStyleButton!
 
     // MARK: lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         initObservers()
         initUI()
-    }
-
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        RRFPSBar.sharedInstance().hidden = false
     }
 
     override func viewWillDisappear(animated: Bool) {
@@ -93,7 +84,7 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
     private func initUI() {
         // init gradient background
         let backgroundLayer = CAGradientLayer()
-        backgroundLayer.colors = [UIColor(rgba: "#BBC1CC").CGColor, UIColor(rgba: "#010B21").CGColor]
+        backgroundLayer.colors = [UIColor.fb_lightColor().CGColor, UIColor.fb_darkColor().CGColor]
         backgroundLayer.frame = view.bounds
         view.layer.addSublayer(backgroundLayer)
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(endEditing)))
@@ -121,8 +112,8 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
         passwordTextField = FBViewGenerator.fbTextField(placeHolder: passwordPlaceholder, secureTextEntry: true)
         passwordTextField.delegate = self
 
-        loginButton = UIButton(type: .System)
-        loginButton.titleLabel?.font = defaultFont
+        loginButton = MZGoogleStyleButton(type: .System)
+        loginButton.titleLabel?.font = UIFont.fb_defaultFontOfSize(14)
         loginButton.addTarget(self, action: #selector(login), forControlEvents: .TouchUpInside)
         loginButton.layer.cornerRadius = 4.0
         loginButton.setTitle(loginButtonTitle, forState: .Normal)
@@ -131,7 +122,7 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
         loginIndicator = UIActivityIndicatorView(activityIndicatorStyle: .White)
 
         registerButton = UIButton(type: .System)
-        registerButton.titleLabel?.font = defaultFont
+        registerButton.titleLabel?.font = UIFont.fb_defaultFontOfSize(14)
         registerButton.addTarget(self, action: #selector(registerButtonPressed), forControlEvents: .TouchUpInside)
         registerButton.setTitle(registerButtonTitle, forState: .Normal)
         registerButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
@@ -205,7 +196,7 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
         registerView = UIView(frame: CGRectMake(0, 0, CGRectGetWidth(view.bounds), CGRectGetHeight(view.bounds) / 2))
         registerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(endRegisterEditing)))
         let backgroundLayer = CAGradientLayer()
-        backgroundLayer.colors = [UIColor(rgba: "#BBC1CC").CGColor, UIColor(rgba: "#010B21").CGColor]
+        backgroundLayer.colors = [UIColor.fb_lightColor().CGColor, UIColor.fb_darkColor().CGColor]
         backgroundLayer.frame = view.bounds
         registerView.layer.addSublayer(backgroundLayer)
         registerView.frame = CGRectMake(0, view.center.y, CGRectGetWidth(view.bounds), CGRectGetHeight(view.bounds))
@@ -245,14 +236,14 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
         cancelButton.setTitle("cancel", forState: .Normal)
         cancelButton.addTarget(self, action: #selector(cancelRegister), forControlEvents: .TouchUpInside)
         cancelButton.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
-        cancelButton.titleLabel?.font = defaultFont
+        cancelButton.titleLabel?.font = UIFont.fb_defaultFontOfSize(14)
         registerView.addSubview(cancelButton)
         //submit button
-        submitButton = UIButton(type: .System)
+        submitButton = MZGoogleStyleButton(type: .System)
         submitButton.addTarget(self, action: #selector(submitRegister), forControlEvents: .TouchUpInside)
         submitButton.setTitle("register", forState: .Normal)
         submitButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        submitButton.titleLabel?.font = defaultFont
+        submitButton.titleLabel?.font = UIFont.fb_defaultFontOfSize(14)
         submitButton.layer.cornerRadius = 4.0
         submitButton.backgroundColor = UIColor(rgba: "#B8B0B029")
         registerView.addSubview(submitButton)
@@ -352,9 +343,10 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
                 let outputInfo = FBApi.statusDescription(status).0
                 let isSuccess = FBApi.statusDescription(status).1
                 if isSuccess {
-                    _ = FBUserInfo(json: json["userInfo"])
+                    let user = FBUserInfo(json: json[kUserInfo])
+                    FBUserManager.sharedManager().user = user
                     MBProgressHUD.showSuccessToView(outputInfo, rootView: self.view)
-                    self.initRondCloud()
+                    self.initRongCloud()
                 } else {
                     MBProgressHUD.showErrorToView(outputInfo, rootView: self.view)
                 }
@@ -471,9 +463,9 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
     }
 
     // MARK: RondCloud
-    func initRondCloud() {
+    func initRongCloud() {
         RCIM.sharedRCIM().initWithAppKey(FBConsts.sharedInstance.kRongCloudAppKey)
-        guard let token = FBUserInfo.sharedUser.rcToken else {
+        guard let token = FBUserManager.sharedManager().user.rcToken else {
             return
         }
         RCIM.sharedRCIM().connectWithToken(

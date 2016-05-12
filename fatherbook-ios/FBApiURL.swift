@@ -28,3 +28,15 @@ var kFBApiLogin: String {
 var kFBApiSearchAccount: String {
     return "\(kFBBaseURL)/app.search.account"
 }
+
+var kFBApiApply: String {
+    return "\(kFBBaseURL)/app.friend.apply"
+}
+
+let kAccount = "account"
+let kPassword = "password"
+let kUserInfo = "userInfo"
+let kApplier = "applier"
+let kApplied = "applied"
+let kApplyDate = "applyDate"
+let kApplyMessage = "applyMessage"

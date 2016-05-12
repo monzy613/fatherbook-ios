@@ -10,7 +10,7 @@ import UIKit
 
 
 class FBViewGenerator {
-    class func fbTextField(placeHolder placeHolder: String = "", secureTextEntry: Bool = false, font: UIFont = UIFont(name: "Avenir-Light", size: 14)!) -> UITextField {
+    class func fbTextField(placeHolder placeHolder: String = "", secureTextEntry: Bool = false, font: UIFont = UIFont.fb_defaultFontOfSize(14)) -> UITextField {
         let textField = UITextField()
         textField.placeholder = placeHolder
         textField.font = font

@@ -10,6 +10,7 @@ target 'fatherbook-ios' do
 	pod 'MBProgressHUD'
 	pod 'SnapKit'
 	pod 'MZPushModalView'
+	pod 'MZGoogleStyleButton', :git => "https://github.com/monzy613/MZGoogleStyleButton.git"
 
 	#RongCloud
 	pod 'RongCloudIMKit'

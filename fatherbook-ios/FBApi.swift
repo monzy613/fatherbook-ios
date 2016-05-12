@@ -10,9 +10,6 @@ import Foundation
 import Alamofire
 import SwiftyJSON
 
-let kAccount = "account"
-let kPassword = "password"
-
 class FBApi {
 
     private static let statusDictionary = [
