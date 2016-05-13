@@ -12,6 +12,7 @@ import MZPushModalView
 import MBProgressHUD
 import UIColor_Hex_Swift
 import MZGoogleStyleButton
+import FXBlurView
 
 private let inputAreaEdgeOffset: CGFloat = 20.0
 private let textFieldOffset: CGFloat = 10.0

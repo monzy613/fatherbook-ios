@@ -176,6 +176,7 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     private func toggleSearchStuffs() {
         if searchToggled {
             delegate?.willDismissSearchTextField(headerView: self)
+            searchTextField.text = ""
             UIView .animateWithDuration(0.25, animations: {
                 self.pageTitleLabel.alpha = 1.0
                 self.searchTextField.snp_remakeConstraints { (make) in

@@ -34,7 +34,7 @@ extension MBProgressHUD {
     class func showLoadingToView(message: String = "", rootView: UIView!) -> MBProgressHUD {
         let hud = MBProgressHUD.showHUDAddedTo(rootView, animated: true)
         hud.labelFont = UIFont.fb_defaultFontOfSize(14)
-        hud.mode = .Determinate
+        hud.mode = .Indeterminate
         hud.labelText = message
         return hud
     }

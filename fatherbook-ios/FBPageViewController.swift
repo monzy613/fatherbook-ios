@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import MBProgressHUD
 import MZGoogleStyleButton
+import FXBlurView
 
 class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate {
 
@@ -24,6 +25,7 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
 
     var searchResultToggled = false
     var searchResultView: UITableView!
+    var searchBlurView: FXBlurView!
     var searchResultDataSource = [FBUserInfo]()
 
 
@@ -51,7 +53,7 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
     }
 
     func searchTextDidReturn(headerView view: FBPageHeaderView, searchText: String) {
-        let hud = MBProgressHUD.showLoadingToView(rootView: view)
+        let hud = MBProgressHUD.showLoadingToView(rootView: self.view)
         FBApi.post(withURL: kFBApiSearchAccount, parameters: [kAccount: searchText], success: { (json) -> (Void) in
             hud.hide(true, afterDelay: 0.0)
             self.searchResultDataSource = []
@@ -110,6 +112,10 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
 
     func toggleResult() {
         if searchResultToggled {
+            searchBlurView.blurAnimation(from: 40.0, to: 0.0, duration: 0.25, completion: { 
+                self.searchBlurView.removeFromSuperview()
+                self.searchBlurView = nil
+            })
             UIView.animateWithDuration(0.25, animations: {
                 self.searchResultView.alpha = 0.0
                 }, completion: { (finished) in
@@ -118,20 +124,26 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
             })
         } else {
             searchResultView = UITableView()
+            searchResultView.backgroundColor = UIColor.clearColor()
             searchResultView.delegate = self
             searchResultView.dataSource = self
             searchResultView.registerClass(FBUserTableViewCell.self, forCellReuseIdentifier: FBUserTableViewCell.self.description())
             searchResultView.tableFooterView = UIView()
-            view.addSubview(searchResultView)
             searchResultView.alpha = 0.0
+            searchBlurView = FXBlurView(frame: view.bounds)
+            searchBlurView.tintColor = UIColor.clearColor()
+            view.insertSubview(searchBlurView, belowSubview: pageHeader)
+            view.addSubview(searchResultView)
             searchResultView.snp_makeConstraints(closure: { (make) in
                 make.left.right.bottom.equalTo(view)
                 make.top.equalTo(pageHeader.snp_bottom)
             })
-            UIView.animateWithDuration(0.25, animations: {
+            searchBlurView.blurAnimation(from: 0.0, to: 40.0, duration: 0.4) {
+                print("completion")
+            }
+            UIView.animateWithDuration(0.4, animations: {
                 self.searchResultView.alpha = 1.0
-                }, completion: { (finished) in
-            })
+                }, completion: nil)
         }
         searchResultToggled = !searchResultToggled
     }
