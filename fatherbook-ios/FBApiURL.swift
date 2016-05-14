@@ -29,14 +29,20 @@ var kFBApiSearchAccount: String {
     return "\(kFBBaseURL)/app.search.account"
 }
 
-var kFBApiApply: String {
-    return "\(kFBBaseURL)/app.friend.apply"
+var kFBApiFollow: String {
+    return "\(kFBBaseURL)/app.friend.follow"
+}
+
+var kFBApiUnFollow: String {
+    return "\(kFBBaseURL)/app.friend.unfollow"
+}
+
+var kFBApiFollowing: String {
+    return "\(kFBBaseURL)/app.friend.following"
 }
 
 let kAccount = "account"
+let kSearchString = "searchString"
 let kPassword = "password"
 let kUserInfo = "userInfo"
-let kApplier = "applier"
-let kApplied = "applied"
-let kApplyDate = "applyDate"
-let kApplyMessage = "applyMessage"
+let kTargetID = "targetID"

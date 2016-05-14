@@ -12,12 +12,33 @@ import MBProgressHUD
 import MZGoogleStyleButton
 import FXBlurView
 
-class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate {
+class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate, FBUserTableViewCellDelegate {
 
     // MARK: views
     var pageHeader: FBPageHeaderView!
-    var topTabLayer: CAGradientLayer!
-    var newTimelineButton: MZGoogleStyleButton!
+    private lazy var newTimelineButton: MZGoogleStyleButton = {
+        let buttonWidth = CGRectGetWidth(self.view.bounds) / 7
+        let _newTimelineButton = MZGoogleStyleButton(type: .System)
+        _newTimelineButton.addTarget(self, action: #selector(newTimelineButtonPressed), forControlEvents: .TouchUpInside)
+        _newTimelineButton.frame = CGRectMake(0, 0, buttonWidth, buttonWidth)
+        _newTimelineButton.center = CGPointMake(CGRectGetWidth(self.view.bounds) - buttonWidth * 0.85, CGRectGetHeight(self.view.bounds) - buttonWidth * 0.85)
+        _newTimelineButton.backgroundColor = UIColor(hex6: 0x535B6D)
+        _newTimelineButton.layer.cornerRadius = buttonWidth / 2
+
+        let plus = UIBezierPath()
+        plus.moveToPoint(CGPointMake(buttonWidth / 4, buttonWidth / 2))
+        plus.addLineToPoint(CGPointMake(buttonWidth * 3 / 4, buttonWidth / 2))
+        plus.moveToPoint(CGPointMake(buttonWidth / 2, buttonWidth / 4))
+        plus.addLineToPoint(CGPointMake(buttonWidth / 2, buttonWidth * 3 / 4))
+        let plusLayer = CAShapeLayer()
+        plusLayer.path = plus.CGPath
+        plusLayer.strokeColor = UIColor.whiteColor().CGColor
+        plusLayer.lineCap = kCALineCapRound
+        plusLayer.frame = _newTimelineButton.bounds
+        plusLayer.lineWidth = floor(0.07 * buttonWidth)
+        _newTimelineButton.layer.addSublayer(plusLayer)
+        return _newTimelineButton
+    }()
 
     let statusBarHeight: CGFloat = 20.0
     var openHeaderPropotion: CGFloat = 0.15
@@ -31,10 +52,33 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
     // page
     var currentIndex = 0
     var isDraggingRight = false
-    var timeLineViewController: FBTimelineViewController!
-    var recentChatViewController: FBRecentChatListViewController!
-    var contactViewController: FBContactViewController!
-    var meViewController: FBMeViewController!
+    private lazy var timeLineViewController: FBTimelineViewController = {
+        let _timeLineViewController = FBTimelineViewController()
+        _timeLineViewController.view.tag = 0
+        _timeLineViewController.view.frame = CGRectMake(0, self.openHeaderHeight + self.statusBarHeight, CGRectGetWidth(self.view.bounds), self.contentViewHeight)
+        return _timeLineViewController
+    }()
+
+    private lazy var recentChatViewController: FBRecentChatListViewController = {
+        let _recentChatViewController = FBRecentChatListViewController()
+        _recentChatViewController.view.tag = 1
+        _recentChatViewController.view.frame = CGRectMake(0, self.openHeaderHeight + self.statusBarHeight, CGRectGetWidth(self.view.bounds), self.contentViewHeight)
+        return _recentChatViewController
+    }()
+
+    private lazy var contactViewController: FBContactViewController = {
+        let _contactViewController = FBContactViewController()
+        _contactViewController.view.tag = 2
+        _contactViewController.view.frame = CGRectMake(0, self.openHeaderHeight + self.statusBarHeight, CGRectGetWidth(self.view.bounds), self.contentViewHeight)
+        return _contactViewController
+    }()
+
+    private lazy var meViewController: FBMeViewController = {
+        let _meViewController = FBMeViewController()
+        _meViewController.view.tag = 3
+        _meViewController.view.frame = CGRectMake(0, self.openHeaderHeight + self.statusBarHeight, CGRectGetWidth(self.view.bounds), self.contentViewHeight)
+        return _meViewController
+    }()
 
 
     var openHeaderHeight: CGFloat {
@@ -58,7 +102,6 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
         }
 
         initSubviews()
-        setupViewControllers()
         self.setViewControllers([timeLineViewController], direction: .Forward, animated: false, completion: nil)
     }
 
@@ -73,13 +116,17 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
 
     // MARK: delegate
     // MARK: FBPageHeaderViewDelegate
-    func searchTextDidChange(headerView view: FBPageHeaderView, searchText: String) {
+    func searchTextDidChange(headerView headerView: FBPageHeaderView, searchText: String) {
         print(searchText)
     }
 
-    func searchTextDidReturn(headerView view: FBPageHeaderView, searchText: String) {
+    func searchTextDidReturn(headerView headerView: FBPageHeaderView, searchText: String) {
+        if searchText.characters.count == 0 {
+            MBProgressHUD.showErrorToView("Please Enter Query string", rootView: self.view)
+            return
+        }
         let hud = MBProgressHUD.showLoadingToView(rootView: self.view)
-        FBApi.post(withURL: kFBApiSearchAccount, parameters: [kAccount: searchText], success: { (json) -> (Void) in
+        FBApi.post(withURL: kFBApiSearchAccount, parameters: [kAccount: FBUserManager.sharedManager().user.account!, kSearchString: searchText], success: { (json) -> (Void) in
             hud.hide(true, afterDelay: 0.0)
             self.searchResultDataSource = []
             if let status = json["status"].string {
@@ -99,30 +146,30 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
             }
             }) { (error) -> (Void) in
         }
-        view.endEditing(true)
+        headerView.endEditing(true)
     }
 
-    func willShowSearchTextField(headerView view: FBPageHeaderView) {
+    func willShowSearchTextField(headerView headerView: FBPageHeaderView) {
         toggleResult()
     }
 
-    func willDismissSearchTextField(headerView view: FBPageHeaderView) {
+    func willDismissSearchTextField(headerView headerView: FBPageHeaderView) {
         toggleResult()
     }
 
-    func timelineButtonPressed(headerView view: FBPageHeaderView) {
+    func timelineButtonPressed(headerView headerView: FBPageHeaderView) {
         setViewController(timeLineViewController)
     }
 
-    func chatButtonPressed(headerView view: FBPageHeaderView) {
+    func chatButtonPressed(headerView headerView: FBPageHeaderView) {
         setViewController(recentChatViewController)
     }
 
-    func contactButtonPressed(headerView view: FBPageHeaderView) {
+    func contactButtonPressed(headerView headerView: FBPageHeaderView) {
         setViewController(contactViewController)
     }
 
-    func meButtonPressed(headerView view: FBPageHeaderView) {
+    func meButtonPressed(headerView headerView: FBPageHeaderView) {
         setViewController(meViewController)
     }
 
@@ -133,10 +180,20 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
 
     // MARK: UIScrollViewDelegate
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        if scrollView.contentOffset.y - searchViewLastContentOffset > 7.0 {
-            pageHeader.endSearch()
+        if scrollView == searchResultView {
+            if scrollView.contentOffset.y - searchViewLastContentOffset > 10.0 {
+                pageHeader.endSearch()
+            }
+            searchViewLastContentOffset = scrollView.contentOffset.y
+            return
         }
-        searchViewLastContentOffset = scrollView.contentOffset.y
+//        let point = scrollView.contentOffset
+//        let percentComplete = (point.x + CGFloat(currentIndex - 1) * CGRectGetWidth(view.bounds)) / (4.0 * CGRectGetWidth(view.bounds))
+//        if percentComplete == 0.0 {
+//            return
+//        }
+//        print(String(format: "%.02f", percentComplete) + ", \(currentIndex)")
+//        pageHeader.moveTo(percentComplete)
     }
 
     func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
@@ -149,6 +206,24 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
         } else if velocity.x < 0 {
             //<--
             isDraggingRight = false
+        }
+    }
+
+    // MARK: FBUserTableViewCellDelegate
+    func actionButtonPressedInCell(cell: FBUserTableViewCell) {
+        guard let indexPath = searchResultView?.indexPathForCell(cell) else {
+            return
+        }
+        if searchResultDataSource.count > indexPath.row {
+            let userInfo = searchResultDataSource[indexPath.row]
+            FBApi.post(withURL: kFBApiFollow, parameters: [
+                kAccount: FBUserManager.sharedManager().user.account!,
+                kTargetID: userInfo.account!
+                ], success: { json -> (Void) in
+                    print(json)
+                }, failure: { err -> (Void) in
+                    print(err)
+            })
         }
     }
 
@@ -165,6 +240,7 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(FBUserTableViewCell.self.description(), forIndexPath: indexPath) as! FBUserTableViewCell
         cell.backgroundColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.5)
+        cell.delegate = self
         if (searchResultDataSource.count > indexPath.row) {
             cell.configureWith(userInfo: searchResultDataSource[indexPath.row])
         }
@@ -213,10 +289,17 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
         if isDraggingRight {
             currentIndex = previousViewControllers[0].view.tag + 1
         } else {
-            currentIndex = previousViewControllers[0].view.tag - 1
+            currentIndex = (previousViewControllers[0].view.tag - 1) < 0 ?0 : previousViewControllers[0].view.tag - 1
         }
         pageHeader.moveTo(index: currentIndex)
-        print("pre: \(previousViewControllers)")
+    }
+
+    func pageViewController(pageViewController: UIPageViewController, willTransitionToViewControllers pendingViewControllers: [UIViewController]) {
+        if isDraggingRight {
+            currentIndex = pendingViewControllers[0].view.tag + 1
+        } else {
+            currentIndex = (pendingViewControllers[0].view.tag - 1) < 0 ?0 : pendingViewControllers[0].view.tag - 1
+        }
     }
 
     // MARK: actions
@@ -224,25 +307,7 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
     }
 
     // MARK: private
-    private func setupViewControllers() {
-        timeLineViewController = FBTimelineViewController()
-        timeLineViewController.view.tag = 0
-        timeLineViewController.view.frame = CGRectMake(0, openHeaderHeight + statusBarHeight, CGRectGetWidth(view.bounds), contentViewHeight)
-
-        recentChatViewController = FBRecentChatListViewController()
-        recentChatViewController.view.tag = 1
-        recentChatViewController.view.frame = CGRectMake(0, openHeaderHeight + statusBarHeight, CGRectGetWidth(view.bounds), contentViewHeight)
-
-        contactViewController = FBContactViewController()
-        contactViewController.view.tag = 2
-        contactViewController.view.frame = CGRectMake(0, openHeaderHeight + statusBarHeight, CGRectGetWidth(view.bounds), contentViewHeight)
-
-        meViewController = FBMeViewController()
-        meViewController.view.tag = 3
-        meViewController.view.frame = CGRectMake(0, openHeaderHeight + statusBarHeight, CGRectGetWidth(view.bounds), contentViewHeight)
-    }
-
-    func toggleResult() {
+    private func toggleResult() {
         if searchResultToggled {
             searchBlurView?.blurAnimation(from: 40.0, to: 0.0, duration: 0.25, completion: {
                 self.searchBlurView?.alpha = 0.0
@@ -289,27 +354,6 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
     func initSubviews() {
         pageHeader = FBPageHeaderView(width: CGRectGetWidth(view.bounds), openHeight: openHeaderHeight)
         pageHeader.delegate = self
-
-        let buttonWidth = CGRectGetWidth(view.bounds) / 7
-        newTimelineButton = MZGoogleStyleButton(type: .System)
-        newTimelineButton.addTarget(self, action: #selector(newTimelineButtonPressed), forControlEvents: .TouchUpInside)
-        newTimelineButton.frame = CGRectMake(0, 0, buttonWidth, buttonWidth)
-        newTimelineButton.center = CGPointMake(CGRectGetWidth(view.bounds) - buttonWidth * 0.85, CGRectGetHeight(view.bounds) - buttonWidth * 0.85)
-        newTimelineButton.backgroundColor = UIColor(hex6: 0x535B6D)
-        newTimelineButton.layer.cornerRadius = buttonWidth / 2
-
-        let plus = UIBezierPath()
-        plus.moveToPoint(CGPointMake(buttonWidth / 4, buttonWidth / 2))
-        plus.addLineToPoint(CGPointMake(buttonWidth * 3 / 4, buttonWidth / 2))
-        plus.moveToPoint(CGPointMake(buttonWidth / 2, buttonWidth / 4))
-        plus.addLineToPoint(CGPointMake(buttonWidth / 2, buttonWidth * 3 / 4))
-        let plusLayer = CAShapeLayer()
-        plusLayer.path = plus.CGPath
-        plusLayer.strokeColor = UIColor.whiteColor().CGColor
-        plusLayer.lineCap = kCALineCapRound
-        plusLayer.frame = newTimelineButton.bounds
-        plusLayer.lineWidth = floor(0.07 * buttonWidth)
-        newTimelineButton.layer.addSublayer(plusLayer)
 
         view.addSubview(pageHeader)
         view.addSubview(newTimelineButton)

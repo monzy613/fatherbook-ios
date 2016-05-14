@@ -9,14 +9,50 @@
 import UIKit
 import SnapKit
 import MZGoogleStyleButton
+protocol FBUserTableViewCellDelegate: class {
+    func actionButtonPressedInCell(cell: FBUserTableViewCell);
+}
 
 class FBUserTableViewCell: UITableViewCell {
-    // MARK: init
-    var avatarImageView: UIImageView!
-    var nicknameLabel: UILabel!
-    var accountLabel: UILabel!
-    var actionButton: MZGoogleStyleButton!
+    // MARK: public properties
+    weak var delegate: FBUserTableViewCellDelegate?
 
+    // MARK: private properties
+    private lazy var avatarImageView: UIImageView = {
+        let _avatarImageView = UIImageView()
+        _avatarImageView.clipsToBounds = true
+        _avatarImageView.layer.cornerRadius = 4.0
+        _avatarImageView.contentMode = .ScaleAspectFill
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            let image = UIImage(named: "default-avatar")
+            dispatch_async(dispatch_get_main_queue(), {
+                _avatarImageView.image = image
+            })
+        }
+        return _avatarImageView
+    }()
+    private lazy var nicknameLabel: UILabel = {
+        let _nicknameLabel = UILabel()
+        _nicknameLabel.font = UIFont.fb_defaultFontOfSize(14)
+        return _nicknameLabel
+    }()
+
+    private lazy var accountLabel: UILabel = {
+        let _accountLabel = UILabel()
+        _accountLabel.font = UIFont.fb_defaultFontOfSize(14)
+        return _accountLabel
+    }()
+
+    private lazy var actionButton: MZGoogleStyleButton = {
+        let _actionButton = MZGoogleStyleButton()
+        _actionButton.addTarget(self, action: #selector(actionButtonPressed), forControlEvents: .TouchUpInside)
+        _actionButton.clipsToBounds = true
+        _actionButton.layer.cornerRadius = 4.0
+        return _actionButton
+    }()
+
+
+    // MARK: init
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         initSubviews()
@@ -53,31 +89,13 @@ class FBUserTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
 
+    // MARK: action
+    @objc private func actionButtonPressed(sender: UIButton) {
+        self.delegate?.actionButtonPressedInCell(self)
+    }
+
     // MARK: private
     private func initSubviews() {
-        //avatar
-        avatarImageView = UIImageView()
-        avatarImageView.clipsToBounds = true
-        avatarImageView.layer.cornerRadius = 4.0
-        avatarImageView.contentMode = .ScaleAspectFill
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) { 
-            let image = UIImage(named: "default-avatar")
-            dispatch_async(dispatch_get_main_queue(), {
-                self.avatarImageView.image = image
-            })
-        }
-
-        //nicknameLabel
-        nicknameLabel = UILabel()
-        nicknameLabel.font = UIFont.fb_defaultFontOfSize(14)
-
-        //accountLabel
-        accountLabel = UILabel()
-        accountLabel.font = UIFont.fb_defaultFontOfSize(14)
-
-        //actionButton
-        actionButton = MZGoogleStyleButton()
-
         contentView.addSubview(avatarImageView)
         contentView.addSubview(nicknameLabel)
         contentView.addSubview(accountLabel)

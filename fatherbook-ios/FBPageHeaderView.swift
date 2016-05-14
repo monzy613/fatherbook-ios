@@ -13,14 +13,14 @@ import UIColor_Hex_Swift
 private let indicateBarHeight: CGFloat = 7.0
 private let statusBarHeight: CGFloat = 20.0
 protocol FBPageHeaderViewDelegate: class {
-    func searchTextDidChange(headerView view: FBPageHeaderView, searchText: String)
-    func searchTextDidReturn(headerView view: FBPageHeaderView, searchText: String)
-    func willShowSearchTextField(headerView view: FBPageHeaderView)
-    func willDismissSearchTextField(headerView view: FBPageHeaderView)
-    func timelineButtonPressed(headerView view: FBPageHeaderView)
-    func chatButtonPressed(headerView view: FBPageHeaderView)
-    func contactButtonPressed(headerView view: FBPageHeaderView)
-    func meButtonPressed(headerView view: FBPageHeaderView)
+    func searchTextDidChange(headerView headerView: FBPageHeaderView, searchText: String)
+    func searchTextDidReturn(headerView headerView: FBPageHeaderView, searchText: String)
+    func willShowSearchTextField(headerView headerView: FBPageHeaderView)
+    func willDismissSearchTextField(headerView headerView: FBPageHeaderView)
+    func timelineButtonPressed(headerView headerView: FBPageHeaderView)
+    func chatButtonPressed(headerView headerView: FBPageHeaderView)
+    func contactButtonPressed(headerView headerView: FBPageHeaderView)
+    func meButtonPressed(headerView headerView: FBPageHeaderView)
 }
 
 class FBPageHeaderView: UIView, UITextFieldDelegate {
@@ -86,6 +86,15 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         }
     }
 
+    func moveTo(leftPercent: CGFloat) {
+        //var frame = indicateBar.frame
+        //frame.origin.x = width * lerp(low: 0.0, max: 0.75, val: leftPercent)
+        //indicateBar.frame = frame
+        var center = indicateBar.position
+        center.x = width * lerp(low: 0.0, max: 0.75, val: leftPercent) + CGRectGetWidth(indicateBar.frame) / 2
+        indicateBar.position = center
+    }
+
     // MARK: UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         delegate?.searchTextDidReturn(headerView: self, searchText: searchTextField.text ?? "")
@@ -98,6 +107,16 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         center.x = sender.center.x
         indicateBar.position = center
         setSelected(sender)
+    }
+
+    private func lerp<T where T: Comparable>(low low: T, max: T, val: T) -> T {
+        var result: T = val
+        if val < low {
+            result = low
+        } else if val > max {
+            result = max
+        }
+        return result
     }
 
     private func setSelected(sender: UIButton) {
