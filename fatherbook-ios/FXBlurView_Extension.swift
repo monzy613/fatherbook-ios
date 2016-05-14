@@ -13,6 +13,7 @@ private var fromAssociatedKey: UInt8 = 0
 private var toAssociatedKey: UInt8 = 0
 private var frameValueAssociatedKey: UInt8 = 0
 private var completionWrapperAssociatedKey: UInt8 = 0
+private var animatingAssociatedKey: UInt8 = 0
 
 private let minimumInterval: NSTimeInterval = 0.005
 
@@ -70,10 +71,24 @@ extension FXBlurView {
         }
     }
 
+    var animating: Bool {
+        get {
+            return objc_getAssociatedObject(self, &animatingAssociatedKey) as? Bool ?? false
+        }
+        set {
+            objc_setAssociatedObject(self, &animatingAssociatedKey, newValue, .OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+
     func blurAnimation(from from: CGFloat, to: CGFloat, duration: CGFloat, completion: (() -> ())? = nil) {
         if from == to {
             return
         }
+        if animating == true {
+            invalidateTimer()
+            return
+        }
+        animating = true
         self.from = from
         self.to = to
         blurRadius = from
@@ -84,7 +99,7 @@ extension FXBlurView {
         animationTimer = NSTimer.scheduledTimerWithTimeInterval(minimumInterval, target: self, selector: #selector(blur), userInfo: nil, repeats: true)
     }
 
-    func blur() {
+    @objc private func blur() {
         self.blurRadius += frameValue
         if to > from && self.blurRadius >= to{
             invalidateTimer()
@@ -94,6 +109,7 @@ extension FXBlurView {
     }
 
     private func invalidateTimer() {
+        animating = false
         blurRadius = to
         animationTimer?.invalidate()
         animationTimer = nil

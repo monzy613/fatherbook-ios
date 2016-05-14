@@ -14,6 +14,7 @@
 		F478BFE81CE3718C00F8F4DE /* FBTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F478BFE71CE3718C00F8F4DE /* FBTimelineViewController.swift */; };
 		F478BFEA1CE371BE00F8F4DE /* FBContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F478BFE91CE371BE00F8F4DE /* FBContactViewController.swift */; };
 		F478BFEC1CE371F700F8F4DE /* FBMeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F478BFEB1CE371F700F8F4DE /* FBMeViewController.swift */; };
+		F48350D41CE6EA4500203391 /* FBRecentChatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48350D31CE6EA4500203391 /* FBRecentChatListViewController.swift */; };
 		F4903E1D1CE5F71400DD9AB5 /* FXBlurView_Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4903E1C1CE5F71400DD9AB5 /* FXBlurView_Extension.swift */; };
 		F4A10D801CE23D3A00DEC337 /* FBPageHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A10D7F1CE23D3A00DEC337 /* FBPageHeaderView.swift */; };
 		F4AA1FFE1CE4167400A2A4F7 /* FBUserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4AA1FFD1CE4167400A2A4F7 /* FBUserManager.swift */; };
@@ -41,6 +42,7 @@
 		F478BFE71CE3718C00F8F4DE /* FBTimelineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBTimelineViewController.swift; sourceTree = "<group>"; };
 		F478BFE91CE371BE00F8F4DE /* FBContactViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBContactViewController.swift; sourceTree = "<group>"; };
 		F478BFEB1CE371F700F8F4DE /* FBMeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBMeViewController.swift; sourceTree = "<group>"; };
+		F48350D31CE6EA4500203391 /* FBRecentChatListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBRecentChatListViewController.swift; sourceTree = "<group>"; };
 		F4903E1C1CE5F71400DD9AB5 /* FXBlurView_Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FXBlurView_Extension.swift; sourceTree = "<group>"; };
 		F4A10D7F1CE23D3A00DEC337 /* FBPageHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBPageHeaderView.swift; sourceTree = "<group>"; };
 		F4AA1FFD1CE4167400A2A4F7 /* FBUserManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBUserManager.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				F4B654DB1CDEF0C600E3ED5E /* FBLoginViewController.swift */,
 				F4FB500F1CE0D8CB00DE849D /* FBPageViewController.swift */,
 				F478BFE71CE3718C00F8F4DE /* FBTimelineViewController.swift */,
+				F48350D31CE6EA4500203391 /* FBRecentChatListViewController.swift */,
 				F478BFE91CE371BE00F8F4DE /* FBContactViewController.swift */,
 				F478BFEB1CE371F700F8F4DE /* FBMeViewController.swift */,
 			);
@@ -307,6 +310,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4B654DA1CDEE31400E3ED5E /* FBApi.swift in Sources */,
+				F48350D41CE6EA4500203391 /* FBRecentChatListViewController.swift in Sources */,
 				F4B654D61CDEE2DA00E3ED5E /* FBApiURL.swift in Sources */,
 				F410B5EC1CE07487008D9D01 /* MBProgressHUD_Extensions.swift in Sources */,
 				F410B5E81CE05F8C008D9D01 /* FBViewGenerator.swift in Sources */,

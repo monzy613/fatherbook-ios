@@ -25,14 +25,18 @@ protocol FBPageHeaderViewDelegate: class {
 
 class FBPageHeaderView: UIView, UITextFieldDelegate {
     weak var delegate: FBPageHeaderViewDelegate?
+
     var pageTitleLabel: UILabel!
-    var searchButton: UIButton!
+
     var timelineButton: UIButton!
     var chatButton: UIButton!
     var contactButton: UIButton!
     var meButton: UIButton!
-    var indicateBar: UIView!
+
+    var searchButton: UIButton!
+    var indicateBar: CALayer!
     var gradientBackground: CAGradientLayer!
+    var searchAnimating = false
 
     //search stuffs
     var searchToggled = false
@@ -62,6 +66,26 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: public
+    func endSearch() {
+        searchButtonPressed(searchButton)
+    }
+
+    func moveTo(index index: Int) {
+        switch index {
+        case 0:
+            moveBarToButton(timelineButton)
+        case 1:
+            moveBarToButton(chatButton)
+        case 2:
+            moveBarToButton(contactButton)
+        case 3:
+            moveBarToButton(meButton)
+        default:
+            break
+        }
+    }
+
     // MARK: UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         delegate?.searchTextDidReturn(headerView: self, searchText: searchTextField.text ?? "")
@@ -69,39 +93,76 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     }
 
     // MARK: private
-    func textFieldDidChange(textField: UITextField) {
-        delegate?.searchTextDidChange(headerView: self, searchText: searchTextField.text ?? "")
+    private func moveBarToButton(sender: UIButton) {
+        var center = indicateBar.position
+        center.x = sender.center.x
+        indicateBar.position = center
+        setSelected(sender)
+    }
+
+    private func setSelected(sender: UIButton) {
+        switch sender {
+        case timelineButton:
+            timelineButton.setImage(UIImage(named: "timeline-selected"), forState: .Normal)
+            chatButton.setImage(UIImage(named: "chat-normal"), forState: .Normal)
+            contactButton.setImage(UIImage(named: "contact-normal"), forState: .Normal)
+            meButton.setImage(UIImage(named: "me-normal"), forState: .Normal)
+        case chatButton:
+            timelineButton.setImage(UIImage(named: "timeline-normal"), forState: .Normal)
+            chatButton.setImage(UIImage(named: "chat-selected"), forState: .Normal)
+            contactButton.setImage(UIImage(named: "contact-normal"), forState: .Normal)
+            meButton.setImage(UIImage(named: "me-normal"), forState: .Normal)
+        case contactButton:
+            timelineButton.setImage(UIImage(named: "timeline-normal"), forState: .Normal)
+            chatButton.setImage(UIImage(named: "chat-normal"), forState: .Normal)
+            contactButton.setImage(UIImage(named: "contact-selected"), forState: .Normal)
+            meButton.setImage(UIImage(named: "me-normal"), forState: .Normal)
+        case meButton:
+            timelineButton.setImage(UIImage(named: "timeline-normal"), forState: .Normal)
+            chatButton.setImage(UIImage(named: "chat-normal"), forState: .Normal)
+            contactButton.setImage(UIImage(named: "contact-normal"), forState: .Normal)
+            meButton.setImage(UIImage(named: "me-selected"), forState: .Normal)
+        default:
+            break
+        }
     }
 
     private func initSubviews() {
+
         pageTitleLabel = UILabel()
         pageTitleLabel.font = UIFont.fb_defaultFontOfSize(20)
         pageTitleLabel.textColor = UIColor.whiteColor()
         pageTitleLabel.text = "Timeline"
+
         searchButton = UIButton(type: .Custom)
         searchButton.addTarget(self, action: #selector(searchButtonPressed), forControlEvents: .TouchUpInside)
         searchButton.setImage(UIImage(named: "search-icon"), forState: .Normal)
-        searchButton.imageView?.contentMode = .ScaleAspectFill
+        searchButton.imageView?.contentMode = .ScaleAspectFit
+
         timelineButton = UIButton(type: .Custom)
         timelineButton.addTarget(self, action: #selector(timelineButtonPressed), forControlEvents: .TouchUpInside)
         timelineButton.setImage(UIImage(named: "timeline-selected"), forState: .Normal)
         timelineButton.imageView?.contentMode = .ScaleAspectFit
         timelineButton.imageEdgeInsets = UIEdgeInsetsMake(5, 0, 3, 0)
+
         chatButton = UIButton(type: .Custom)
         chatButton.addTarget(self, action: #selector(chatButtonPressed), forControlEvents: .TouchUpInside)
         chatButton.setImage(UIImage(named: "chat-normal"), forState: .Normal)
         chatButton.imageView?.contentMode = .ScaleAspectFit
         chatButton.imageEdgeInsets = UIEdgeInsetsMake(5, 0, 3, 0)
+
         contactButton = UIButton(type: .Custom)
         contactButton.addTarget(self, action: #selector(contactButtonPressed), forControlEvents: .TouchUpInside)
         contactButton.setImage(UIImage(named: "contact-normal"), forState: .Normal)
         contactButton.imageView?.contentMode = .ScaleAspectFit
         contactButton.imageEdgeInsets = UIEdgeInsetsMake(5, 0, 3, 0)
+
         meButton = UIButton(type: .Custom)
         meButton.addTarget(self, action: #selector(meButtonPressed), forControlEvents: .TouchUpInside)
         meButton.setImage(UIImage(named: "me-normal"), forState: .Normal)
         meButton.imageView?.contentMode = .ScaleAspectFit
         meButton.imageEdgeInsets = UIEdgeInsetsMake(5, 0, 3, 0)
+
         gradientBackground = CAGradientLayer()
         gradientBackground.colors = [UIColor.fb_lightColor().CGColor, UIColor.fb_darkColor().CGColor]
         gradientBackground.frame = bounds
@@ -115,6 +176,10 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         searchTextField.backgroundColor = UIColor.whiteColor()
         searchTextField.leftViewMode = .Always
 
+        indicateBar = CALayer()
+        indicateBar.backgroundColor = UIColor.whiteColor().CGColor
+        indicateBar.frame = CGRectMake(0, openHeight - 7, width / 4, 7)
+
         layer.addSublayer(gradientBackground)
         addSubview(pageTitleLabel)
         addSubview(searchButton)
@@ -123,13 +188,13 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         addSubview(chatButton)
         addSubview(contactButton)
         addSubview(meButton)
+        layer.addSublayer(indicateBar)
     }
 
     private func setupConstraints() {
         let pageButtonWidth = width / 4
         let pageButtonHeight = (openHeight - indicateBarHeight) / 2
         let searchButtonHeight = pageButtonHeight / 2
-        let searchButtonWidth = searchButtonHeight * 0.8
         pageTitleLabel.snp_makeConstraints { (make) in
             make.top.equalTo(self)
             make.left.equalTo(self).offset(20.0)
@@ -139,7 +204,8 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
             make.centerX.equalTo(meButton)
             make.centerY.equalTo(pageTitleLabel)
             make.height.equalTo(searchButtonHeight)
-            make.width.equalTo(searchButtonWidth)
+            make.right.equalTo(self)
+            make.left.equalTo(meButton).offset(10)
         }
         searchTextField.snp_makeConstraints { (make) in
             make.centerY.equalTo(searchButton)
@@ -174,7 +240,9 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     }
 
     private func toggleSearchStuffs() {
+        searchAnimating = true
         if searchToggled {
+            endEditing(true)
             delegate?.willDismissSearchTextField(headerView: self)
             searchTextField.text = ""
             UIView .animateWithDuration(0.25, animations: {
@@ -187,6 +255,7 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
                 }
                 self.layoutIfNeeded()
                 }, completion: { (finished) in
+                    self.searchAnimating = false
             })
         } else {
             delegate?.willShowSearchTextField(headerView: self)
@@ -200,6 +269,7 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
                 }
                 self.layoutIfNeeded()
                 }, completion: { (finished) in
+                    self.searchAnimating = false
                     self.searchTextField.becomeFirstResponder()
             })
         }
@@ -207,23 +277,34 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     }
 
     // MARK: actions
-    func searchButtonPressed(sender: UIButton) {
+    @objc private func searchButtonPressed(sender: UIButton) {
+        if searchAnimating {
+            return
+        }
         toggleSearchStuffs()
     }
 
-    func timelineButtonPressed(sender: UIButton) {
+    @objc private func timelineButtonPressed(sender: UIButton) {
         delegate?.timelineButtonPressed(headerView: self)
+        moveBarToButton(sender)
     }
 
-    func chatButtonPressed(sender: UIButton) {
+    @objc private func chatButtonPressed(sender: UIButton) {
         delegate?.chatButtonPressed(headerView: self)
+        moveBarToButton(sender)
     }
 
-    func contactButtonPressed(sender: UIButton) {
+    @objc private func contactButtonPressed(sender: UIButton) {
         delegate?.contactButtonPressed(headerView: self)
+        moveBarToButton(sender)
     }
 
-    func meButtonPressed(sender: UIButton) {
+    @objc private func meButtonPressed(sender: UIButton) {
         delegate?.meButtonPressed(headerView: self)
+        moveBarToButton(sender)
+    }
+
+    @objc private func textFieldDidChange(textField: UITextField) {
+        delegate?.searchTextDidChange(headerView: self, searchText: searchTextField.text ?? "")
     }
 }

@@ -1,18 +1,18 @@
 //
-//  FBContactViewController.swift
+//  FBRecentChatListViewController.swift
 //  fatherbook-ios
 //
-//  Created by Monzy Zhang on 5/11/16.
+//  Created by Monzy Zhang on 5/14/16.
 //  Copyright © 2016 MonzyZhang. All rights reserved.
 //
 
 import UIKit
 
-class FBContactViewController: UITableViewController {
+class FBRecentChatListViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.magentaColor()
+        view.backgroundColor = UIColor.greenColor()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 

@@ -12,6 +12,7 @@ class FBTimelineViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor.redColor()
     }
 
     // MARK: - Table view data source
