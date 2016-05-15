@@ -11,6 +11,7 @@ import SnapKit
 import MBProgressHUD
 import MZGoogleStyleButton
 import FXBlurView
+import SIAlertView
 
 class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate, FBUserTableViewCellDelegate {
 
@@ -134,6 +135,12 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
                 if let users = json["users"].array {
                     for user in users {
                         let userInfo = FBUserInfo(json: user)
+                        if let followInfos = FBUserManager.sharedManager().user.followInfos {
+                            if followInfos.contains(userInfo) {
+                                let relation = followInfos[followInfos.indexOf(userInfo) ?? 0].relation
+                                userInfo.relation = relation
+                            }
+                        }
                         self.searchResultDataSource.append(userInfo)
                     }
                     dispatch_async(dispatch_get_main_queue(), {
@@ -216,14 +223,42 @@ class FBPageViewController: UIPageViewController, UIPageViewControllerDelegate, 
         }
         if searchResultDataSource.count > indexPath.row {
             let userInfo = searchResultDataSource[indexPath.row]
-            FBApi.post(withURL: kFBApiFollow, parameters: [
-                kAccount: FBUserManager.sharedManager().user.account!,
-                kTargetID: userInfo.account!
-                ], success: { json -> (Void) in
-                    print(json)
-                }, failure: { err -> (Void) in
-                    print(err)
-            })
+            switch userInfo.relation {
+            case .Follow:
+                //press to follow
+                FBApi.post(withURL: kFBApiFollow, parameters: [
+                    kAccount: FBUserManager.sharedManager().user.account!,
+                    kTargetID: userInfo.account!
+                    ], success: { json -> (Void) in
+                        print(json)
+                    }, failure: { err -> (Void) in
+                        print(err)
+                })
+                cell.setStateWithRelation(userInfo.relation.next())
+            case .Followed, .TwoWayFollowed:
+                //press to unfollow
+                let alert = SIAlertView(title: "取消关注", andMessage: "确认取消关注用户: \(userInfo.nickname ?? "")?")
+                alert.destructiveButtonColor = UIColor.fb_lightColor()
+                alert.cancelButtonColor = UIColor.fb_darkColor()
+                alert.buttonsListStyle = .Rows
+                alert.addButtonWithTitle("是", type: .Destructive, backgroundColor: UIColor.fb_darkColor(), cornerRadius: 4.0, handler: {
+                    alertView in
+                    FBApi.post(withURL: kFBApiUnFollow, parameters: [
+                        kAccount: FBUserManager.sharedManager().user.account!,
+                        kTargetID: userInfo.account!
+                        ], success: { json -> (Void) in
+                            print(json)
+                        }, failure: { err -> (Void) in
+                            print(err)
+                    })
+                    cell.setStateWithRelation(userInfo.relation.next())
+                })
+                alert.addButtonWithTitle("否", type: .Cancel, backgroundColor: UIColor.fb_lightColor(), cornerRadius: 4.0, handler:nil)
+                alert.transitionStyle = .DropDown
+                alert.show()
+            default:
+                break
+            }
         }
     }
 

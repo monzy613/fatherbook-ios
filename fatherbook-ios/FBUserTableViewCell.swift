@@ -31,6 +31,7 @@ class FBUserTableViewCell: UITableViewCell {
         }
         return _avatarImageView
     }()
+
     private lazy var nicknameLabel: UILabel = {
         let _nicknameLabel = UILabel()
         _nicknameLabel.font = UIFont.fb_defaultFontOfSize(14)
@@ -61,20 +62,7 @@ class FBUserTableViewCell: UITableViewCell {
     func configureWith(userInfo userInfo: FBUserInfo) {
         nicknameLabel.text = userInfo.nickname ?? userInfo.account ?? "nil"
         accountLabel.text = "soa ID: \(userInfo.account ?? "nil")"
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            var image: UIImage!
-            switch userInfo.relation {
-            case .Follow:
-                image = UIImage(named: "follow")
-            case .Followed:
-                image = UIImage(named: "followed")
-            case .TwoWayFollowed, .Me:
-                image = UIImage(named: "two-way-followed")
-            }
-            dispatch_async(dispatch_get_main_queue(), {
-                self.actionButton.setBackgroundImage(image, forState: .Normal)
-            })
-        }
+        setStateWithRelation(userInfo.relation)
     }
 
     override func prepareForReuse() {
@@ -87,6 +75,27 @@ class FBUserTableViewCell: UITableViewCell {
 
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+    }
+
+    // MARK: public
+    func setStateWithRelation(relation: FBUserRelation?) {
+        guard let relation = relation else {
+            return
+        }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            var image: UIImage!
+            switch relation {
+            case .Follow:
+                image = UIImage(named: "follow")
+            case .Followed:
+                image = UIImage(named: "followed")
+            case .TwoWayFollowed, .Me:
+                image = UIImage(named: "two-way-followed")
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                self.actionButton.setBackgroundImage(image, forState: .Normal)
+            })
+        }
     }
 
     // MARK: action

@@ -346,6 +346,7 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
                 if isSuccess {
                     let user = FBUserInfo(json: json[kUserInfo])
                     FBUserManager.sharedManager().user = user
+                    user.setFollowInfos(withJSON: json[kFollowInfos])
                     MBProgressHUD.showSuccessToView(outputInfo, rootView: self.view)
                     self.initRongCloud()
                 } else {

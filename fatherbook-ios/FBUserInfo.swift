@@ -13,11 +13,24 @@ import SwiftyJSON
  * the relation with current user
  *
  */
-enum FBUserRelation {
-    case Me
-    case Follow
-    case Followed
-    case TwoWayFollowed
+enum FBUserRelation: Int {
+    case Me = -1
+    case Follow = 0
+    case Followed = 1
+    case TwoWayFollowed = 2
+
+    mutating func next() -> FBUserRelation {
+        switch self {
+        case .Follow:
+            self = .Followed
+            return .Followed
+        case .Followed, .TwoWayFollowed:
+            self = .Follow
+            return .Follow
+        default:
+            return .Follow
+        }
+    }
 }
 
 class FBUserInfo: NSObject, NSCoding {
@@ -27,6 +40,18 @@ class FBUserInfo: NSObject, NSCoding {
     var nickname: String?
     var rcToken: String?
     var relation: FBUserRelation = .Me
+    var followInfos: [FBUserInfo]?
+
+    func setFollowInfos(withJSON json: JSON) {
+        if let follow_infos = json.array {
+            followInfos = [FBUserInfo]()
+            for infoJSON in follow_infos {
+                let info = FBUserInfo(json: infoJSON)
+                info.relation = FBUserRelation(rawValue: infoJSON["type"].int ?? 0) ?? .Follow
+                followInfos?.append(info)
+            }
+        }
+    }
 
     init(json: JSON) {
         super.init()
@@ -36,8 +61,9 @@ class FBUserInfo: NSObject, NSCoding {
         nickname = json["nickname"].string
         rcToken = json["rcToken"].string
 
-        //should set relation
-        relation = .Follow
+        //set relation
+        let type = json["type"].int ?? 0
+        relation = FBUserRelation(rawValue: type) ?? .Me
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -53,5 +79,12 @@ class FBUserInfo: NSObject, NSCoding {
         aCoder.encodeObject(phone, forKey: "phone")
         aCoder.encodeObject(email, forKey: "email")
         aCoder.encodeObject(nickname, forKey: "nickname")
+    }
+
+    override func isEqual(object: AnyObject?) -> Bool {
+        if let rhs = object as? FBUserInfo {
+            return rhs.account == self.account
+        }
+        return false
     }
 }
