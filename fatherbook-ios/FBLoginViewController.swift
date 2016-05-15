@@ -485,7 +485,7 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
                 //显示聊天会话界面
                 dispatch_async(dispatch_get_main_queue(), {
                     //self.presentViewController(chat, animated: true, completion: nil)
-                    self.presentViewController(FBPageViewController(), animated: true, completion: nil)
+                    self.presentViewController(FBRootViewController(), animated: true, completion: nil)
                 })
             }, error: { (status) -> Void in
                 print("登陆的错误码为:\(status.rawValue)")

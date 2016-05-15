@@ -53,6 +53,24 @@ class FBUserInfo: NSObject, NSCoding {
         }
     }
 
+    func updateFollowInfos(withUserInfo userInfo: FBUserInfo) {
+        if let followInfos = self.followInfos {
+            if followInfos.contains(userInfo) {
+                if userInfo.relation != .Followed || userInfo.relation != .TwoWayFollowed {
+                    self.followInfos!.removeAtIndex(followInfos.indexOf(userInfo)!)
+                    return
+                }
+                let _index = followInfos.indexOf(userInfo)
+                guard let index = _index else {return}
+                self.followInfos![index] = userInfo
+            } else {
+                self.followInfos?.append(userInfo)
+            }
+        } else {
+            self.followInfos = [FBUserInfo]()
+        }
+    }
+
     init(json: JSON) {
         super.init()
         account = json["account"].string ?? json["_id"].string

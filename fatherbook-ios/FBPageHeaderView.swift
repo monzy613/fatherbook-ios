@@ -43,7 +43,9 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     var searchTextField: UITextField!
 
     var width: CGFloat = 0
-    var closeHeight: CGFloat = 0
+    var closeHeight: CGFloat {
+        return timelineButton.frame.origin.y + statusBarHeight - 3.0
+    }
     var openHeight: CGFloat = 0
 
 
@@ -52,7 +54,6 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         self.init(frame: CGRectMake(0, statusBarHeight, width, openHeight))
         self.width = width
         self.openHeight = openHeight
-        self.closeHeight = (openHeight - indicateBarHeight) / 2
         initSubviews()
         setupConstraints()
     }
@@ -236,25 +237,25 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
             make.bottom.equalTo(self).offset(-indicateBarHeight)
             make.left.equalTo(self)
             make.height.equalTo(pageButtonHeight)
-            make.width.equalTo(pageButtonWidth)
+            make.left.equalTo(self)
         }
         chatButton.snp_makeConstraints { (make) in
             make.bottom.equalTo(self).offset(-indicateBarHeight)
             make.left.equalTo(timelineButton.snp_right)
             make.height.equalTo(pageButtonHeight)
-            make.width.equalTo(pageButtonWidth)
+            make.width.equalTo(timelineButton)
         }
         contactButton.snp_makeConstraints { (make) in
             make.bottom.equalTo(self).offset(-indicateBarHeight)
             make.left.equalTo(chatButton.snp_right)
             make.height.equalTo(pageButtonHeight)
-            make.width.equalTo(pageButtonWidth)
+            make.width.equalTo(timelineButton)
         }
         meButton.snp_makeConstraints { (make) in
             make.bottom.equalTo(self).offset(-indicateBarHeight)
             make.left.equalTo(contactButton.snp_right)
             make.height.equalTo(pageButtonHeight)
-            make.width.equalTo(pageButtonWidth)
+            make.width.equalTo(timelineButton)
         }
     }
 

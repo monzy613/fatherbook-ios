@@ -9,7 +9,8 @@
 import UIKit
 
 class FBTimelineViewController: UITableViewController {
-
+    
+    // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.redColor()

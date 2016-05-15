@@ -7,89 +7,113 @@
 //
 
 import UIKit
+import SIAlertView
 
-class FBContactViewController: UITableViewController {
+class FBContactViewController: UITableViewController, FBUserTableViewCellDelegate {
+    var rootViewController: FBRootViewController?
 
+    // MARK: - life cycle -
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.magentaColor()
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        tableView.tableFooterView = UIView()
+        tableView.registerClass(FBUserTableViewCell.self, forCellReuseIdentifier: NSStringFromClass(FBUserTableViewCell.self))
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
+
+    // MARK: - delegate -
+    // MARK: FBUserTableViewCellDelegate
+    func actionButtonPressedInCell(cell: FBUserTableViewCell) {
+        guard let indexPath = tableView.indexPathForCell(cell), let contactInfos = FBUserManager.sharedManager().user.followInfos else {
+            return
+        }
+        if contactInfos.count > indexPath.row {
+            let userInfo = contactInfos[indexPath.row]
+            switch userInfo.relation {
+            case .Follow:
+                //press to follow
+                FBApi.post(withURL: kFBApiFollow, parameters: [
+                    kAccount: FBUserManager.sharedManager().user.account!,
+                    kTargetID: userInfo.account!
+                    ], success: { json -> (Void) in
+                        print(json)
+                    }, failure: { err -> (Void) in
+                        print(err)
+                })
+                cell.setStateWithRelation(userInfo.relation.next())
+                FBUserManager.sharedManager().user.updateFollowInfos(withUserInfo: userInfo)
+                tableView.reloadData()
+            case .Followed, .TwoWayFollowed:
+                //press to unfollow
+                let alert = SIAlertView(title: "取消关注", andMessage: "确认取消关注用户: \(userInfo.nickname ?? "")?")
+                alert.destructiveButtonColor = UIColor.fb_lightColor()
+                alert.cancelButtonColor = UIColor.fb_darkColor()
+                alert.buttonsListStyle = .Rows
+                alert.addButtonWithTitle("是", type: .Destructive, backgroundColor: UIColor.fb_darkColor(), cornerRadius: 4.0, handler: {
+                    alertView in
+                    FBApi.post(withURL: kFBApiUnFollow, parameters: [
+                        kAccount: FBUserManager.sharedManager().user.account!,
+                        kTargetID: userInfo.account!
+                        ], success: { json -> (Void) in
+                            print(json)
+                        }, failure: { err -> (Void) in
+                            print(err)
+                    })
+                    cell.setStateWithRelation(userInfo.relation.next())
+                    FBUserManager.sharedManager().user.updateFollowInfos(withUserInfo: userInfo)
+                    self.tableView.reloadData()
+                })
+                alert.addButtonWithTitle("否", type: .Cancel, backgroundColor: UIColor.fb_lightColor(), cornerRadius: 4.0, handler:nil)
+                alert.transitionStyle = .DropDown
+                alert.show()
+            default:
+                break
+            }
+        }
+    }
+
+    // MARK: - Table view delegate
+
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
 
     // MARK: - Table view data source
-
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 2
+    }
+
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "\(section)"
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        guard let count = FBUserManager.sharedManager().user.followInfos?.count else {
+            return 0
+        }
+        return count
     }
 
-    /*
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
-
-        // Configure the cell...
-
+        let cell = tableView.dequeueReusableCellWithIdentifier(FBUserTableViewCell.self.description(), forIndexPath: indexPath) as! FBUserTableViewCell
+        cell.backgroundColor = UIColor.whiteColor()
+        guard let count = FBUserManager.sharedManager().user.followInfos?.count else {
+            return cell
+        }
+        if cell.delegate == nil {
+            cell.delegate = self
+        }
+        if (count > indexPath.row) {
+            cell.configureWith(userInfo: FBUserManager.sharedManager().user.followInfos![indexPath.row])
+        }
         return cell
     }
-    */
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return 87.0
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
