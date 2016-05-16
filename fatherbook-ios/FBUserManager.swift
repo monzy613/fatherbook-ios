@@ -10,7 +10,10 @@ import Foundation
 
 class FBUserManager {
     var user: FBUserInfo!
+    var rcInitSuccess: Bool = false
+
     private static var sharedInstance: FBUserManager?
+
     class func sharedManager() -> FBUserManager {
         if sharedInstance == nil {
             sharedInstance = FBUserManager()

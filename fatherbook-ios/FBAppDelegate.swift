@@ -1,5 +1,5 @@
 //
-//  AppDelegate.swift
+//  FBAppDelegate.swift
 //  fatherbook-ios
 //
 //  Created by Monzy Zhang on 16/5/8.
@@ -10,7 +10,7 @@ import UIKit
 
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class FBAppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var loginViewController: FBLoginViewController?

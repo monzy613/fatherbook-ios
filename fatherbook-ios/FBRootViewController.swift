@@ -14,7 +14,7 @@ import FXBlurView
 import SIAlertView
 
 class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate, FBUserTableViewCellDelegate {
-    private lazy var pageHeader: FBPageHeaderView = {
+    lazy var pageHeader: FBPageHeaderView = {
         let _pageHeader = FBPageHeaderView(width: CGRectGetWidth(self.view.bounds), openHeight: self.openHeaderHeight)
         _pageHeader.delegate = self
         return _pageHeader
@@ -113,6 +113,21 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
             }
         }
         pageViewController.setViewControllers([timeLineViewController], direction: .Forward, animated: false, completion: nil)
+    }
+
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+
+    // MARK: public
+    func changePageToIndex(index: Int) {
+        switch index {
+        case 0:
+            break
+        default:
+            break
+        }
     }
 
     // MARK: delegate

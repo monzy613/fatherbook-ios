@@ -38,7 +38,6 @@ class FBUserInfo: NSObject, NSCoding {
     var phone: String?
     var email: String?
     var nickname: String?
-    var rcToken: String?
     var relation: FBUserRelation = .Me
     var followInfos: [FBUserInfo]?
 
@@ -77,8 +76,7 @@ class FBUserInfo: NSObject, NSCoding {
         phone = json["phone"].string
         email = json["email"].string
         nickname = json["nickname"].string
-        rcToken = json["rcToken"].string
-
+        setFollowInfos(withJSON: json[kFollowInfos])
         //set relation
         let type = json["type"].int ?? 0
         relation = FBUserRelation(rawValue: type) ?? .Me

@@ -78,12 +78,15 @@ class FBContactViewController: UITableViewController, FBUserTableViewCellDelegat
     // MARK: - Table view delegate
 
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let userInfoViewController = FBUserInfoViewController()
+        userInfoViewController.userInfo = FBUserManager.sharedManager().user.followInfos?.fb_safeObjectAtIndex(indexPath.row)
+        self.rootViewController?.navigationController?.pushViewController(userInfoViewController, animated: true)
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
 
     // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
 
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -104,11 +107,8 @@ class FBContactViewController: UITableViewController, FBUserTableViewCellDelegat
         guard let count = FBUserManager.sharedManager().user.followInfos?.count else {
             return cell
         }
-        if cell.delegate == nil {
-            cell.delegate = self
-        }
         if (count > indexPath.row) {
-            cell.configureWith(userInfo: FBUserManager.sharedManager().user.followInfos![indexPath.row])
+            cell.configureContactCellWith(userInfo: FBUserManager.sharedManager().user.followInfos![indexPath.row])
         }
         return cell
     }

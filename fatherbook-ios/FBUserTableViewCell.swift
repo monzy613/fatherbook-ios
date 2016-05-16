@@ -40,6 +40,7 @@ class FBUserTableViewCell: UITableViewCell {
 
     private lazy var accountLabel: UILabel = {
         let _accountLabel = UILabel()
+        _accountLabel.textColor = UIColor.grayColor()
         _accountLabel.font = UIFont.fb_defaultFontOfSize(14)
         return _accountLabel
     }()
@@ -63,6 +64,12 @@ class FBUserTableViewCell: UITableViewCell {
         nicknameLabel.text = userInfo.nickname ?? userInfo.account ?? "nil"
         accountLabel.text = "soa ID: \(userInfo.account ?? "nil")"
         setStateWithRelation(userInfo.relation)
+    }
+
+    func configureContactCellWith(userInfo userInfo: FBUserInfo) {
+        nicknameLabel.text = userInfo.nickname ?? userInfo.account ?? "nil"
+        accountLabel.text = "soa ID: \(userInfo.account ?? "nil")"
+        actionButton.removeFromSuperview()
     }
 
     override func prepareForReuse() {
@@ -89,8 +96,11 @@ class FBUserTableViewCell: UITableViewCell {
                 image = UIImage(named: "follow")
             case .Followed:
                 image = UIImage(named: "followed")
-            case .TwoWayFollowed, .Me:
+            case .TwoWayFollowed:
                 image = UIImage(named: "two-way-followed")
+            case .Me:
+                image = nil
+                self.actionButton.enabled = false
             }
             dispatch_async(dispatch_get_main_queue(), {
                 self.actionButton.setBackgroundImage(image, forState: .Normal)

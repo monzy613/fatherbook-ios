@@ -346,9 +346,8 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
                 if isSuccess {
                     let user = FBUserInfo(json: json[kUserInfo])
                     FBUserManager.sharedManager().user = user
-                    user.setFollowInfos(withJSON: json[kFollowInfos])
                     MBProgressHUD.showSuccessToView(outputInfo, rootView: self.view)
-                    self.initRongCloud()
+                    self.loginSuccess()
                 } else {
                     MBProgressHUD.showErrorToView(outputInfo, rootView: self.view)
                 }
@@ -464,36 +463,19 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
         }
     }
 
-    // MARK: RondCloud
-    func initRongCloud() {
-        RCIM.sharedRCIM().initWithAppKey(FBConsts.sharedInstance.kRongCloudAppKey)
-        guard let token = FBUserManager.sharedManager().user.rcToken else {
-            return
+    func loginSuccess() {
+        let navigationController = UINavigationController(rootViewController: FBRootViewController())
+        navigationController.setNavigationBarHidden(true, animated: false)
+        navigationController.navigationBar.barTintColor = UIColor.fb_darkColor()
+        navigationController.navigationBar.tintColor = UIColor.whiteColor()
+        navigationController.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
+        self.presentViewController(navigationController, animated: true, completion: nil)
+        FBApi.post(withURL: kFBRCToken, parameters: [kAccount: FBUserManager.sharedManager().user.account ?? ""], success: { (json) -> (Void) in
+            if let token = json["rcToken"].string {
+                FBRCChatManager.sharedManager().rcToken = token
+                FBRCChatManager.initRC()
+            }
+            }) { (err) -> (Void) in
         }
-        RCIM.sharedRCIM().connectWithToken(
-            token,
-            success: { (userId) -> Void in
-                print("登陆成功。当前登录的用户ID：\(userId)")
-                //新建一个聊天会话View Controller对象
-                let chat = RCConversationViewController()
-                //设置会话的类型，如单聊、讨论组、群聊、聊天室、客服、公众服务会话等
-                chat.conversationType = RCConversationType.ConversationType_PRIVATE
-                //设置会话的目标会话ID。（单聊、客服、公众服务会话为对方的ID，讨论组、群聊、聊天室为会话的ID）
-                chat.targetId = "adm"
-                //设置聊天会话界面要显示的标题
-                chat.title = "RCTEST"
-                //显示聊天会话界面
-                dispatch_async(dispatch_get_main_queue(), {
-                    //self.presentViewController(chat, animated: true, completion: nil)
-                    self.presentViewController(FBRootViewController(), animated: true, completion: nil)
-                })
-            }, error: { (status) -> Void in
-                print("登陆的错误码为:\(status.rawValue)")
-            }, tokenIncorrect: {
-                //token过期或者不正确。
-                //如果设置了token有效期并且token过期，请重新请求您的服务器获取新的token
-                //如果没有设置token有效期却提示token错误，请检查您客户端和服务器的appkey是否匹配，还有检查您获取token的流程。
-                print("token错误")
-        })
     }
 }
