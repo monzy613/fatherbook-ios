@@ -17,6 +17,9 @@ target 'fatherbook-ios' do
 	#RongCloud
 	pod 'RongCloudIMKit'
 
+	#Qiniu
+	pod 'Qiniu', '~>7.0'
+
 	#Extensions
 	pod 'UIColor_Hex_Swift'
 

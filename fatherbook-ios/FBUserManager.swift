@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FBUserManager {
+class FBUserManager: NSObject, RCIMUserInfoDataSource {
     var user: FBUserInfo!
     var rcInitSuccess: Bool = false
 
@@ -21,6 +21,16 @@ class FBUserManager {
         return sharedInstance!
     }
 
-    private init() {
+    private override init() {
+        super.init()
+        RCIM.sharedRCIM().userInfoDataSource = self
+    }
+
+    // MARK: RCIMUserInfoDataSource
+    func getUserInfoWithUserId(userId: String!, completion: ((RCUserInfo!) -> Void)!) {
+        let userInfo = RCUserInfo(userId: userId, name: "", portrait: "")
+        userInfo.name = user.nicknameWithAccount(userId) ?? userId
+        userInfo.portraitUri = user.avatarURLWithAccount(userId)
+        completion(userInfo)
     }
 }

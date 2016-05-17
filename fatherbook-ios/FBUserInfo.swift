@@ -40,6 +40,7 @@ class FBUserInfo: NSObject, NSCoding {
     var nickname: String?
     var relation: FBUserRelation = .Me
     var followInfos: [FBUserInfo]?
+    var avatarURL: String?
 
     func setFollowInfos(withJSON json: JSON) {
         if let follow_infos = json.array {
@@ -70,12 +71,39 @@ class FBUserInfo: NSObject, NSCoding {
         }
     }
 
+    func nicknameWithAccount(account: String) -> String? {
+        var nick: String? = nil
+        if let followInfos = followInfos {
+            for followInfo in followInfos {
+                if followInfo.account == account {
+                    nick = followInfo.nickname
+                    break
+                }
+            }
+        }
+        return nick
+    }
+
+    func avatarURLWithAccount(account: String) -> String? {
+        var url: String? = nil
+        if let followInfos = followInfos {
+            for followInfo in followInfos {
+                if followInfo.account == account {
+                    url = followInfo.avatarURL
+                    break
+                }
+            }
+        }
+        return url
+    }
+
     init(json: JSON) {
         super.init()
         account = json["account"].string ?? json["_id"].string
         phone = json["phone"].string
         email = json["email"].string
         nickname = json["nickname"].string
+        avatarURL = json["avatarURL"].string
         setFollowInfos(withJSON: json[kFollowInfos])
         //set relation
         let type = json["type"].int ?? 0
