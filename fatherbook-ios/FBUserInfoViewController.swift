@@ -24,10 +24,6 @@ class FBUserInfoViewController: UITableViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-
     // MARK: - delegate
     // MARK: - Table view delegate
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

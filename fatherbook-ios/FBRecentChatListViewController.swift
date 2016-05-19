@@ -12,6 +12,7 @@ class FBRecentChatListViewController: RCConversationListViewController {
     override func viewDidLoad() {
         //重写显示相关的接口，必须先调用super，否则会屏蔽SDK默认的处理
         super.viewDidLoad()
+        conversationListTableView.tableFooterView = UIView()
 
         //设置需要显示哪些类型的会话
         self.setDisplayConversationTypes([RCConversationType.ConversationType_PRIVATE.rawValue,
@@ -28,9 +29,8 @@ class FBRecentChatListViewController: RCConversationListViewController {
     //重写RCConversationListViewController的onSelectedTableRow事件
     override func onSelectedTableRow(conversationModelType: RCConversationModelType, conversationModel model: RCConversationModel!, atIndexPath indexPath: NSIndexPath!) {
         //打开会话界面
-        let chat = RCConversationViewController(conversationType: model.conversationType, targetId: model.targetId)
+        let chat = FBChatViewController(conversationType: model.conversationType, targetId: model.targetId)
         chat.title = model.targetId
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
         self.navigationController?.pushViewController(chat, animated: true)
     }
 

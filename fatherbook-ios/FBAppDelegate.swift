@@ -28,8 +28,9 @@ class FBAppDelegate: UIResponder, UIApplicationDelegate {
             window?.makeKeyAndVisible()
         } else {
             rootViewController = FBRootViewController()
+            let navigationController = UINavigationController(rootViewController: FBRootViewController())
             window = UIWindow(frame: UIScreen.mainScreen().bounds)
-            window!.rootViewController = rootViewController!
+            window!.rootViewController = navigationController
             window!.backgroundColor = UIColor.clearColor()
             window?.makeKeyAndVisible()
         }

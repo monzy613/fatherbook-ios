@@ -55,6 +55,11 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
+    // MARK: preferredStatusBarStyle
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return .LightContent
+    }
+
     // MARK: UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         switch textField {
@@ -83,11 +88,8 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
     }
 
     private func initUI() {
-        // init gradient background
-        let backgroundLayer = CAGradientLayer()
-        backgroundLayer.colors = [UIColor.fb_lightColor().CGColor, UIColor.fb_darkColor().CGColor]
-        backgroundLayer.frame = view.bounds
-        view.layer.addSublayer(backgroundLayer)
+        // init background
+        view.backgroundColor = UIColor.fb_darkColor()
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(endEditing)))
         // init subviews
         logoView = UIImageView(image: UIImage(named: "white-logo")!)
@@ -195,11 +197,8 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
             return
         }
         registerView = UIView(frame: CGRectMake(0, 0, CGRectGetWidth(view.bounds), CGRectGetHeight(view.bounds) / 2))
+        registerView.backgroundColor = UIColor.fb_darkColor()
         registerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(endRegisterEditing)))
-        let backgroundLayer = CAGradientLayer()
-        backgroundLayer.colors = [UIColor.fb_lightColor().CGColor, UIColor.fb_darkColor().CGColor]
-        backgroundLayer.frame = view.bounds
-        registerView.layer.addSublayer(backgroundLayer)
         registerView.frame = CGRectMake(0, view.center.y, CGRectGetWidth(view.bounds), CGRectGetHeight(view.bounds))
 
         //rAccountTextField & rPasswordTextField & rPasswordConfirmTextField
@@ -467,11 +466,7 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
 
     func loginSuccess() {
         let navigationController = UINavigationController(rootViewController: FBRootViewController())
-        navigationController.setNavigationBarHidden(true, animated: false)
-        navigationController.navigationBar.barTintColor = UIColor.fb_darkColor()
-        navigationController.navigationBar.tintColor = UIColor.whiteColor()
-        navigationController.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
-        self.presentViewController(navigationController, animated: true, completion: nil)
+        presentViewController(navigationController, animated: true, completion: nil)
         FBApi.post(withURL: kFBRCToken, parameters: [kAccount: FBUserManager.sharedManager().user.account ?? ""], success: { (json) -> (Void) in
             if let token = json["rcToken"].string {
                 FBRCChatManager.sharedManager().rcToken = token

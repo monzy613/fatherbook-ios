@@ -13,7 +13,7 @@ import MZGoogleStyleButton
 import FXBlurView
 import SIAlertView
 
-class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate, FBUserTableViewCellDelegate {
+class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate {
     lazy var pageHeader: FBPageHeaderView = {
         let _pageHeader = FBPageHeaderView(width: CGRectGetWidth(self.view.bounds), openHeight: self.openHeaderHeight)
         _pageHeader.delegate = self
@@ -98,16 +98,30 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     // MARK: - lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        if RCIM.sharedRCIM().getConnectionStatus() == .ConnectionStatus_Unconnected {
+
+        // set navigationcontroller
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.navigationBar.barTintColor = UIColor.fb_darkColor()
+        navigationController?.navigationBar.tintColor = UIColor.whiteColor()
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
+
+        // check rongcloud
+        if RCIM.sharedRCIM().getConnectionStatus() != .ConnectionStatus_Connected {
             FBRCChatManager.initRC()
         }
-        view.backgroundColor = UIColor.fb_lightColor()
+
+        //fetch userInfo
+
+        // setup subviews
+        view.opaque = false
+        view.backgroundColor = UIColor.whiteColor()
         pageViewController = FBScrollPageViewController()
         addChildViewController(pageViewController)
         view.addSubview(pageViewController.view)
         view.addSubview(pageHeader)
         view.addSubview(newTimelineButton)
         pageViewController.view.frame = CGRectMake(0, openHeaderHeight + 20.0, CGRectGetWidth(view.bounds), CGRectGetHeight(view.bounds) - openHeaderHeight)
+        pageViewController.setViewControllers([timeLineViewController], direction: .Forward, animated: false, completion: nil)
         pageViewController.delegate = self
         pageViewController.dataSource = self
         for subview in pageViewController.view.subviews {
@@ -115,12 +129,16 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
                 (subview as! UIScrollView).delegate = self
             }
         }
-        pageViewController.setViewControllers([timeLineViewController], direction: .Forward, animated: false, completion: nil)
     }
 
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+
+    // MARK: preferredStatusBarStyle
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return .LightContent
     }
 
     // MARK: public
@@ -130,6 +148,18 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
             break
         default:
             break
+        }
+    }
+
+    func openHeader() {
+        pageHeader.open {
+            self.pageViewController.view.frame = CGRectMake(0, self.openHeaderHeight + 20.0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - self.openHeaderHeight)
+        }
+    }
+
+    func closeHeader() {
+        pageHeader.close {
+            self.pageViewController.view.frame = CGRectMake(0, self.pageHeader.tabButtonHeight + 20.0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - self.pageHeader.tabButtonHeight)
         }
     }
 
@@ -235,7 +265,7 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
         }
     }
 
-    // MARK: FBUserTableViewCellDelegate
+    // MARK: FBUserTableViewCell action button handler
     func actionButtonPressedInCell(cell: FBUserTableViewCell) {
         guard let indexPath = searchResultView?.indexPathForCell(cell) else {
             return
@@ -298,9 +328,7 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(FBUserTableViewCell.self.description(), forIndexPath: indexPath) as! FBUserTableViewCell
         cell.backgroundColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.5)
-        if cell.delegate == nil {
-            cell.delegate = self
-        }
+        cell.actionButtonHandler = actionButtonPressedInCell
         if (searchResultDataSource.count > indexPath.row) {
             cell.configureWith(userInfo: searchResultDataSource[indexPath.row])
         }

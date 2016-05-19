@@ -9,13 +9,12 @@
 import UIKit
 import SnapKit
 import MZGoogleStyleButton
-protocol FBUserTableViewCellDelegate: class {
-    func actionButtonPressedInCell(cell: FBUserTableViewCell);
-}
 
 class FBUserTableViewCell: UITableViewCell {
+    
     // MARK: public properties
-    weak var delegate: FBUserTableViewCellDelegate?
+    var actionButtonHandler: ((FBUserTableViewCell) -> ())?
+    var avatarTouchHandler: ((FBUserTableViewCell) -> ())?
 
     // MARK: private properties
     private lazy var avatarImageView: UIImageView = {
@@ -23,6 +22,8 @@ class FBUserTableViewCell: UITableViewCell {
         _avatarImageView.clipsToBounds = true
         _avatarImageView.layer.cornerRadius = 4.0
         _avatarImageView.contentMode = .ScaleAspectFill
+        _avatarImageView.userInteractionEnabled = true
+        _avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapHandler)))
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             let image = UIImage(named: "default-avatar")
             dispatch_async(dispatch_get_main_queue(), {
@@ -110,7 +111,13 @@ class FBUserTableViewCell: UITableViewCell {
 
     // MARK: action
     @objc private func actionButtonPressed(sender: UIButton) {
-        self.delegate?.actionButtonPressedInCell(self)
+        actionButtonHandler?(self)
+        //delegate?.actionButtonPressedInCell!(self)
+    }
+
+    @objc private func tapHandler(tap: UITapGestureRecognizer) {
+        avatarTouchHandler?(self)
+        //delegate?.avatarTouched!(self)
     }
 
     // MARK: private

@@ -22,7 +22,7 @@ extension UIColor {
     }
 
     class func fb_darkColor() -> UIColor {
-        return UIColor(rgba: "#010B21")
+        return UIColor(rgba: "#151E33")
     }
 
     class func fb_darkRedColor() -> UIColor {

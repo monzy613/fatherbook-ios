@@ -35,25 +35,29 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
 
     var searchButton: UIButton!
     var indicateBar: CALayer!
-    var gradientBackground: CAGradientLayer!
     var searchAnimating = false
 
     //search stuffs
     var searchToggled = false
     var searchTextField: UITextField!
 
+    //open clode
+    var isOpen = true
     var width: CGFloat = 0
     var closeHeight: CGFloat {
-        return timelineButton.frame.origin.y + statusBarHeight - 3.0
+        return timelineButton.frame.origin.y - 3.0
+    }
+    var tabButtonHeight: CGFloat {
+        return CGRectGetHeight(timelineButton.bounds)
     }
     var openHeight: CGFloat = 0
 
 
     // MARK: init
     convenience init(width: CGFloat, openHeight: CGFloat) {
-        self.init(frame: CGRectMake(0, statusBarHeight, width, openHeight))
+        self.init(frame: CGRectMake(0, 0, width, openHeight + statusBarHeight))
         self.width = width
-        self.openHeight = openHeight
+        self.openHeight = openHeight + statusBarHeight
         initSubviews()
         setupConstraints()
     }
@@ -72,6 +76,32 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         searchButtonPressed(searchButton)
     }
 
+    func open(canOpen: (() -> ())?) {
+        if isOpen {
+            return
+        }
+        self.isOpen = true
+        UIView.animateWithDuration(0.25) {
+            canOpen?()
+            self.frame = CGRectMake(0, 0, self.width, self.openHeight)
+            self.pageTitleLabel.alpha = 1.0
+            self.searchButton.alpha = 1.0
+        }
+    }
+
+    func close(canClose: (() -> ())?) {
+        if !isOpen {
+            return
+        }
+        self.isOpen = false
+        UIView.animateWithDuration(0.25) {
+            canClose?()
+            self.frame = CGRectMake(0, -self.openHeight + statusBarHeight + CGRectGetHeight(self.timelineButton.bounds), self.width, self.openHeight)
+            self.pageTitleLabel.alpha = 0.0
+            self.searchButton.alpha = 0.0
+        }
+    }
+
     func moveTo(index index: Int) {
         switch index {
         case 0:
@@ -88,9 +118,6 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     }
 
     func moveTo(leftPercent: CGFloat) {
-        //var frame = indicateBar.frame
-        //frame.origin.x = width * lerp(low: 0.0, max: 0.75, val: leftPercent)
-        //indicateBar.frame = frame
         var center = indicateBar.position
         center.x = width * lerp(low: 0.0, max: 0.75, val: leftPercent) + CGRectGetWidth(indicateBar.frame) / 2
         indicateBar.position = center
@@ -148,6 +175,7 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     }
 
     private func initSubviews() {
+        backgroundColor = UIColor.fb_darkColor()
 
         pageTitleLabel = UILabel()
         pageTitleLabel.font = UIFont.fb_defaultFontOfSize(20)
@@ -183,9 +211,6 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         meButton.imageView?.contentMode = .ScaleAspectFit
         meButton.imageEdgeInsets = UIEdgeInsetsMake(5, 0, 3, 0)
 
-        gradientBackground = CAGradientLayer()
-        gradientBackground.colors = [UIColor.fb_lightColor().CGColor, UIColor.fb_darkColor().CGColor]
-        gradientBackground.frame = bounds
 
         searchTextField = UITextField()
         searchTextField.delegate = self
@@ -200,7 +225,6 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         indicateBar.backgroundColor = UIColor.whiteColor().CGColor
         indicateBar.frame = CGRectMake(0, openHeight - 7, width / 4, 7)
 
-        layer.addSublayer(gradientBackground)
         addSubview(pageTitleLabel)
         addSubview(searchButton)
         addSubview(searchTextField)
@@ -215,7 +239,7 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         let pageButtonHeight = (openHeight - indicateBarHeight) / 2
         let searchButtonHeight = pageButtonHeight / 2
         pageTitleLabel.snp_makeConstraints { (make) in
-            make.top.equalTo(self)
+            make.top.equalTo(self).offset(statusBarHeight)
             make.left.equalTo(self).offset(20.0)
             make.bottom.equalTo(timelineButton.snp_top)
         }

@@ -21,6 +21,12 @@ PODS:
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
   - Alamofire (3.4.0)
+  - BUKImagePickerController (0.1.10):
+    - FastttCamera (~> 0.3)
+  - BUKPhotoEditViewController (0.1.0)
+  - FastttCamera (0.3.4):
+    - FastttCamera/Default (= 0.3.4)
+  - FastttCamera/Default (0.3.4)
   - FXBlurView (1.6.4)
   - HappyDNS (0.2.4)
   - MBProgressHUD (0.9.2)
@@ -32,6 +38,9 @@ PODS:
   - Reveal-iOS-SDK (1.6.2)
   - RongCloudIMKit (2.5.1)
   - RRFPSBar (0.0.1)
+  - SDWebImage (3.7.6):
+    - SDWebImage/Core (= 3.7.6)
+  - SDWebImage/Core (3.7.6)
   - SIAlertView (1.3.1)
   - SnapKit (0.20.0)
   - SwiftyJSON (2.3.2)
@@ -40,6 +49,8 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire
+  - BUKImagePickerController
+  - BUKPhotoEditViewController
   - FXBlurView
   - MBProgressHUD
   - MZGoogleStyleButton (from `https://github.com/monzy613/MZGoogleStyleButton.git`)
@@ -48,6 +59,7 @@ DEPENDENCIES:
   - Reveal-iOS-SDK
   - RongCloudIMKit
   - RRFPSBar
+  - SDWebImage
   - SIAlertView (from `https://github.com/monzy613/SIAlertView.git`, branch `buttonBackgroundCornerRadiusInitializer`)
   - SnapKit
   - SwiftyJSON
@@ -72,6 +84,9 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
   Alamofire: c19a627cefd6a95f840401c49ab1f124e07f54ee
+  BUKImagePickerController: d08c2e1f6ebe32d63d75f9a5ea06f780f7e45a77
+  BUKPhotoEditViewController: ceb7d2698117511bbbad8f3994d11ac001059958
+  FastttCamera: 51f16712cbd5bdb08bc6231b957325c6be5e478d
   FXBlurView: db786c2561cb49a09ae98407f52460096ab8a44f
   HappyDNS: 86ab4be498cc5cc884002b248979cd130cfbe10e
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
@@ -81,12 +96,13 @@ SPEC CHECKSUMS:
   Reveal-iOS-SDK: e2250b3c155bcfac53ae223ddc1f76d08f206c33
   RongCloudIMKit: d7b234005ed139f03081ca87d48ad9a8ee7dd766
   RRFPSBar: 32fd2b11fb3d6ea90dc9a1424f964ea3851cd091
+  SDWebImage: c325cf02c30337336b95beff20a13df489ec0ec9
   SIAlertView: e1862c2e1006fb2eefb78028107e56fa0e8c5629
   SnapKit: 5fce3c1bbbf1fbd31de9aa92f33eb9fa03f15650
   SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
   SWXMLHash: 795c66e74f4cc9473ad6465c6653c5a6f59f417e
   UIColor_Hex_Swift: e91dc51f6bf252ec7bf74c8704ceedeeb7640c1c
 
-PODFILE CHECKSUM: c0b133ee0a9b8d906c41666147b94d53e8c97c7a
+PODFILE CHECKSUM: d035a2f6ee02076af92e4f7e49bbc798713ee575
 
 COCOAPODS: 1.0.0

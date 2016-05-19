@@ -9,8 +9,9 @@
 import UIKit
 import SIAlertView
 
-class FBContactViewController: UITableViewController, FBUserTableViewCellDelegate {
+class FBContactViewController: UITableViewController {
     var rootViewController: FBRootViewController?
+    private var scrollViewLastContentOffset: CGFloat = 0.0
 
     // MARK: - life cycle -
     override func viewDidLoad() {
@@ -80,7 +81,7 @@ class FBContactViewController: UITableViewController, FBUserTableViewCellDelegat
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let userInfoViewController = FBUserInfoViewController()
         userInfoViewController.userInfo = FBUserManager.sharedManager().user.followInfos?.fb_safeObjectAtIndex(indexPath.row)
-        self.rootViewController?.navigationController?.pushViewController(userInfoViewController, animated: true)
+        rootViewController?.navigationController?.pushViewController(userInfoViewController, animated: true)
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
 
@@ -115,5 +116,16 @@ class FBContactViewController: UITableViewController, FBUserTableViewCellDelegat
 
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return 87.0
+    }
+
+    // MARK: Scroll view delegate
+    override func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        print(scrollView.contentOffset.y - scrollViewLastContentOffset)
+        if scrollView.contentOffset.y - scrollViewLastContentOffset > 0 {
+            rootViewController?.closeHeader()
+        } else if scrollView.contentOffset.y - scrollViewLastContentOffset < 0 {
+            rootViewController?.openHeader()
+        }
+        scrollViewLastContentOffset = 0.0
     }
 }
