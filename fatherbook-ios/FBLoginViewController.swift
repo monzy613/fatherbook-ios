@@ -344,7 +344,9 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
                 let outputInfo = FBApi.statusDescription(status).0
                 let isSuccess = FBApi.statusDescription(status).1
                 if isSuccess {
-                    let user = FBUserInfo(json: json[kUserInfo])
+                    let userInfoJSON = json[kUserInfo]
+                    let user = FBUserInfo(json: userInfoJSON)
+                    FBPersist.set(value: userInfoJSON.object, forKey: .UserInfo)
                     FBUserManager.sharedManager().user = user
                     MBProgressHUD.showSuccessToView(outputInfo, rootView: self.view)
                     self.loginSuccess()

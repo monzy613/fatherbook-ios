@@ -12,7 +12,7 @@ target 'fatherbook-ios' do
 	pod 'MZPushModalView'
 	pod 'FXBlurView'
 	pod 'MZGoogleStyleButton', :git => "https://github.com/monzy613/MZGoogleStyleButton.git"
-	pod 'SIAlertView'
+	pod 'SIAlertView', :git => "https://github.com/monzy613/SIAlertView.git", :branch => 'buttonBackgroundCornerRadiusInitializer'
 
 	#RongCloud
 	pod 'RongCloudIMKit'

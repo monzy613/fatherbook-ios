@@ -33,7 +33,7 @@ enum FBUserRelation: Int {
     }
 }
 
-class FBUserInfo: NSObject, NSCoding {
+class FBUserInfo: NSObject {
     var account: String?
     var phone: String?
     var email: String?
@@ -108,21 +108,6 @@ class FBUserInfo: NSObject, NSCoding {
         //set relation
         let type = json["type"].int ?? 0
         relation = FBUserRelation(rawValue: type) ?? .Me
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init()
-        account = aDecoder.decodeObjectForKey("account") as? String
-        phone = aDecoder.decodeObjectForKey("phone") as? String
-        email = aDecoder.decodeObjectForKey("email") as? String
-        nickname = aDecoder.decodeObjectForKey("nickname") as? String
-    }
-
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(account, forKey: "account")
-        aCoder.encodeObject(phone, forKey: "phone")
-        aCoder.encodeObject(email, forKey: "email")
-        aCoder.encodeObject(nickname, forKey: "nickname")
     }
 
     override func isEqual(object: AnyObject?) -> Bool {

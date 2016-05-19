@@ -98,6 +98,9 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     // MARK: - lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        if RCIM.sharedRCIM().getConnectionStatus() == .ConnectionStatus_Unconnected {
+            FBRCChatManager.initRC()
+        }
         view.backgroundColor = UIColor.fb_lightColor()
         pageViewController = FBScrollPageViewController()
         addChildViewController(pageViewController)

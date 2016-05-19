@@ -32,7 +32,7 @@ PODS:
   - Reveal-iOS-SDK (1.6.2)
   - RongCloudIMKit (2.5.1)
   - RRFPSBar (0.0.1)
-  - SIAlertView (1.3)
+  - SIAlertView (1.3.1)
   - SnapKit (0.20.0)
   - SwiftyJSON (2.3.2)
   - SWXMLHash (2.3.1)
@@ -48,7 +48,7 @@ DEPENDENCIES:
   - Reveal-iOS-SDK
   - RongCloudIMKit
   - RRFPSBar
-  - SIAlertView
+  - SIAlertView (from `https://github.com/monzy613/SIAlertView.git`, branch `buttonBackgroundCornerRadiusInitializer`)
   - SnapKit
   - SwiftyJSON
   - SWXMLHash
@@ -57,11 +57,17 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   MZGoogleStyleButton:
     :git: https://github.com/monzy613/MZGoogleStyleButton.git
+  SIAlertView:
+    :branch: buttonBackgroundCornerRadiusInitializer
+    :git: https://github.com/monzy613/SIAlertView.git
 
 CHECKOUT OPTIONS:
   MZGoogleStyleButton:
     :commit: db5b996cd4b5a4fb33290acb5fba29bf701eb1ad
     :git: https://github.com/monzy613/MZGoogleStyleButton.git
+  SIAlertView:
+    :commit: 805871a156f7d0822c7bded9202513015cb55a5a
+    :git: https://github.com/monzy613/SIAlertView.git
 
 SPEC CHECKSUMS:
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
@@ -75,12 +81,12 @@ SPEC CHECKSUMS:
   Reveal-iOS-SDK: e2250b3c155bcfac53ae223ddc1f76d08f206c33
   RongCloudIMKit: d7b234005ed139f03081ca87d48ad9a8ee7dd766
   RRFPSBar: 32fd2b11fb3d6ea90dc9a1424f964ea3851cd091
-  SIAlertView: 20c794b55eaf44d888773ea51647cf8907723919
+  SIAlertView: e1862c2e1006fb2eefb78028107e56fa0e8c5629
   SnapKit: 5fce3c1bbbf1fbd31de9aa92f33eb9fa03f15650
   SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
   SWXMLHash: 795c66e74f4cc9473ad6465c6653c5a6f59f417e
   UIColor_Hex_Swift: e91dc51f6bf252ec7bf74c8704ceedeeb7640c1c
 
-PODFILE CHECKSUM: 3940610a793abff98b10ae6b2f304c5a77d2f749
+PODFILE CHECKSUM: c0b133ee0a9b8d906c41666147b94d53e8c97c7a
 
 COCOAPODS: 1.0.0

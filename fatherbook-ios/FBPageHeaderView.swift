@@ -212,7 +212,6 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     }
 
     private func setupConstraints() {
-        let pageButtonWidth = width / 4
         let pageButtonHeight = (openHeight - indicateBarHeight) / 2
         let searchButtonHeight = pageButtonHeight / 2
         pageTitleLabel.snp_makeConstraints { (make) in

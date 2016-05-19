@@ -35,8 +35,8 @@ class FBRCChatManager {
             token,
             success: { (userId) -> Void in
                 print("登陆成功。当前登录的用户ID：\(userId)")
-                print(RCIM.sharedRCIM().currentUserInfo)
                 FBUserManager.sharedManager().rcInitSuccess = true
+                FBPersist.set(value: sharedManager().rcToken, forKey: .RCToken)
             }, error: { (status) -> Void in
                 print("登陆的错误码为:\(status.rawValue)")
             }, tokenIncorrect: {
