@@ -14,7 +14,7 @@ import FXBlurView
 import SIAlertView
 import Material
 
-class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate {
+class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate, FBTextTimelineViewDelegate {
     lazy var pageHeader: FBPageHeaderView = {
         let _pageHeader = FBPageHeaderView(width: CGRectGetWidth(self.view.bounds), openHeight: self.openHeaderHeight)
         _pageHeader.delegate = self
@@ -144,6 +144,14 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     }
 
     // MARK: delegate
+    // MARK: FBTextTimelineViewDelegate
+    func sendButtonPressed(textEditor: FBTextTimelineView) {
+        textEditor.dismiss()
+    }
+
+    func cancelButtonPressed(textEditor: FBTextTimelineView) {
+        textEditor.dismiss()
+    }
     // MARK: FBPageHeaderViewDelegate
     func searchTextDidChange(headerView headerView: FBPageHeaderView, searchText: String) {
         print(searchText)
@@ -376,12 +384,9 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
         case 0:
             //textButton
             let textTimelineEditor = FBTextTimelineView(frame: CGRectZero)
+            textTimelineEditor.editorDelegate = self
             view.addSubview(textTimelineEditor)
-            textTimelineEditor.snp_makeConstraints(closure: { (make) in
-                make.width.equalTo(279.0)
-                make.height.equalTo(250.0)
-                make.center.equalTo(view)
-            })
+            textTimelineEditor.show()
         case 1:
             //imageButton
             break
