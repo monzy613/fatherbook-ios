@@ -29,6 +29,7 @@ PODS:
   - FastttCamera/Default (0.3.4)
   - FXBlurView (1.6.4)
   - HappyDNS (0.2.4)
+  - Material (1.41.1)
   - MBProgressHUD (0.9.2)
   - MZGoogleStyleButton (0.1.0)
   - MZPushModalView (0.1.0)
@@ -52,6 +53,7 @@ DEPENDENCIES:
   - BUKImagePickerController
   - BUKPhotoEditViewController
   - FXBlurView
+  - Material (~> 1.0)
   - MBProgressHUD
   - MZGoogleStyleButton (from `https://github.com/monzy613/MZGoogleStyleButton.git`)
   - MZPushModalView
@@ -89,6 +91,7 @@ SPEC CHECKSUMS:
   FastttCamera: 51f16712cbd5bdb08bc6231b957325c6be5e478d
   FXBlurView: db786c2561cb49a09ae98407f52460096ab8a44f
   HappyDNS: 86ab4be498cc5cc884002b248979cd130cfbe10e
+  Material: 441818e40ca8d30a4b83f9795e75a0d8c88ccf97
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   MZGoogleStyleButton: 5350eb2f0726a6fb44774f0234f985ef7ee4820f
   MZPushModalView: 82394824cd11d6cffafea0d52d8f588fc1bbd2c6
@@ -103,6 +106,6 @@ SPEC CHECKSUMS:
   SWXMLHash: 795c66e74f4cc9473ad6465c6653c5a6f59f417e
   UIColor_Hex_Swift: e91dc51f6bf252ec7bf74c8704ceedeeb7640c1c
 
-PODFILE CHECKSUM: d035a2f6ee02076af92e4f7e49bbc798713ee575
+PODFILE CHECKSUM: c753e6bdc37b6e4ca479ec7e3ec184a6861c7713
 
 COCOAPODS: 1.0.0

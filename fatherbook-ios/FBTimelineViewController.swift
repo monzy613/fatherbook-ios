@@ -16,6 +16,16 @@ class FBTimelineViewController: UITableViewController {
         view.backgroundColor = UIColor.redColor()
     }
 
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        NSNotificationCenter.defaultCenter().postNotificationName(kTIMELINEVCWILLSHOW, object: nil)
+    }
+
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        NSNotificationCenter.defaultCenter().postNotificationName(kTIMELINEVCWILLDISMISS, object: nil)
+    }
+
     // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {

@@ -7,6 +7,9 @@
 //
 import Foundation
 
+let kTIMELINEVCWILLSHOW = "TIMELINEVCWILLSHOW"
+let kTIMELINEVCWILLDISMISS = "TIMELINEVCWILLDISMISS"
+
 private struct FBConfigKey {
     static let kRongCloudAppKey = "kRongCloudAppKey"
     static let kRongCloudAppSecret = "kRongCloudAppSecret"

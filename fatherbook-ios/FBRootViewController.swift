@@ -12,6 +12,7 @@ import MBProgressHUD
 import MZGoogleStyleButton
 import FXBlurView
 import SIAlertView
+import Material
 
 class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate {
     lazy var pageHeader: FBPageHeaderView = {
@@ -21,29 +22,7 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     }()
 
     // MARK: views
-    private lazy var newTimelineButton: MZGoogleStyleButton = {
-        let buttonWidth = CGRectGetWidth(self.view.bounds) / 7
-        let _newTimelineButton = MZGoogleStyleButton(type: .System)
-        _newTimelineButton.addTarget(self, action: #selector(newTimelineButtonPressed), forControlEvents: .TouchUpInside)
-        _newTimelineButton.frame = CGRectMake(0, 0, buttonWidth, buttonWidth)
-        _newTimelineButton.center = CGPointMake(CGRectGetWidth(self.view.bounds) - buttonWidth * 0.85, CGRectGetHeight(self.view.bounds) - buttonWidth * 0.85)
-        _newTimelineButton.backgroundColor = UIColor(hex6: 0x535B6D)
-        _newTimelineButton.layer.cornerRadius = buttonWidth / 2
-
-        let plus = UIBezierPath()
-        plus.moveToPoint(CGPointMake(buttonWidth / 4, buttonWidth / 2))
-        plus.addLineToPoint(CGPointMake(buttonWidth * 3 / 4, buttonWidth / 2))
-        plus.moveToPoint(CGPointMake(buttonWidth / 2, buttonWidth / 4))
-        plus.addLineToPoint(CGPointMake(buttonWidth / 2, buttonWidth * 3 / 4))
-        let plusLayer = CAShapeLayer()
-        plusLayer.path = plus.CGPath
-        plusLayer.strokeColor = UIColor.whiteColor().CGColor
-        plusLayer.lineCap = kCALineCapRound
-        plusLayer.frame = _newTimelineButton.bounds
-        plusLayer.lineWidth = floor(0.07 * buttonWidth)
-        _newTimelineButton.layer.addSublayer(plusLayer)
-        return _newTimelineButton
-    }()
+    private lazy var menuView: MenuView = MenuView()
 
     let statusBarHeight: CGFloat = 20.0
     var openHeaderPropotion: CGFloat = 0.15
@@ -119,7 +98,7 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
         addChildViewController(pageViewController)
         view.addSubview(pageViewController.view)
         view.addSubview(pageHeader)
-        view.addSubview(newTimelineButton)
+        prepareMenuView()
         pageViewController.view.frame = CGRectMake(0, openHeaderHeight + 20.0, CGRectGetWidth(view.bounds), CGRectGetHeight(view.bounds) - openHeaderHeight)
         pageViewController.setViewControllers([timeLineViewController], direction: .Forward, animated: false, completion: nil)
         pageViewController.delegate = self
@@ -129,6 +108,7 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
                 (subview as! UIScrollView).delegate = self
             }
         }
+        initObservers()
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -383,9 +363,6 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     }
 
     func pageViewController(pageViewController: UIPageViewController, willTransitionToViewControllers pendingViewControllers: [UIViewController]) {
-        if (pendingViewControllers[0] != timeLineViewController && newTimelineButtonToggled) || (pendingViewControllers[0] == timeLineViewController) {
-            toggleNewTimelineButton()
-        }
         if isDraggingRight {
             currentIndex = pendingViewControllers[0].view.tag + 1
         } else {
@@ -394,22 +371,71 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     }
 
     // MARK: - actions
-    func newTimelineButtonPressed(sender: UIButton) {
+    func handleButton(sender: UIButton) {
+        switch sender.tag {
+        case 0:
+            //textButton
+            let textTimelineEditor = FBTextTimelineView(frame: CGRectZero)
+            view.addSubview(textTimelineEditor)
+            textTimelineEditor.snp_makeConstraints(closure: { (make) in
+                make.width.equalTo(279.0)
+                make.height.equalTo(250.0)
+                make.center.equalTo(view)
+            })
+        case 1:
+            //imageButton
+            break
+        default:
+            break
+        }
+    }
+
+    func handleMenu(sender: UIButton) {
+        if menuView.menu.opened {
+            menuView.menu.close()
+            (menuView.menu.views?.first as? MaterialButton)?.animate(MaterialAnimation.rotate(rotation: 0))
+        } else {
+            menuView.menu.open() { (v: UIView) in
+                (v as? MaterialButton)?.pulse()
+            }
+            (menuView.menu.views?.first as? MaterialButton)?.animate(MaterialAnimation.rotate(rotation: 0.125))
+        }
+    }
+
+    // MARK: notification handler
+    func timelineWillShow() {
+        showMenuView(true)
+    }
+
+    func timelineWillDismiss() {
+        showMenuView(false)
+        openMenuView(false)
     }
 
     // MARK: private
-    private func toggleNewTimelineButton() {
+    private func openMenuView(open: Bool) {
+        if open {
+            menuView.menu.open() { (v: UIView) in
+                (v as? MaterialButton)?.pulse()
+            }
+            (menuView.menu.views?.first as? MaterialButton)?.animate(MaterialAnimation.rotate(rotation: 0.125))
+        } else {
+            menuView.menu.close()
+            (menuView.menu.views?.first as? MaterialButton)?.animate(MaterialAnimation.rotate(rotation: 0))
+        }
+    }
+
+    private func showMenuView(show: Bool) {
         let buttonWidth = CGRectGetWidth(self.view.bounds) / 7
         var newCenter: CGPoint
-        if newTimelineButtonToggled {
-            newCenter = CGPointMake(CGRectGetWidth(self.view.bounds) - buttonWidth * 0.85, CGRectGetHeight(self.view.bounds) + buttonWidth / 2)
+        if show {
+            newCenter = CGPointMake(CGRectGetWidth(self.view.bounds) - buttonWidth * 0.75, CGRectGetHeight(self.view.bounds) - buttonWidth * 0.75)
         } else {
-            newCenter = CGPointMake(CGRectGetWidth(self.view.bounds) - buttonWidth * 0.85, CGRectGetHeight(self.view.bounds) - buttonWidth * 0.85)
+            newCenter = CGPointMake(CGRectGetWidth(self.view.bounds) - buttonWidth * 0.75, CGRectGetHeight(self.view.bounds) + buttonWidth / 2)
         }
         UIView.animateWithDuration(0.25) {
-            self.newTimelineButton.center = newCenter
+            self.menuView.center = newCenter
         }
-        newTimelineButtonToggled = !newTimelineButtonToggled
     }
 
     private func toggleResult() {
@@ -474,5 +500,72 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
                 self.currentIndex = tag
             }
         }
+    }
+
+    private func prepareMenuView() {
+        let diameter = CGRectGetWidth(self.view.bounds) / 7
+        let plus = UIBezierPath()
+        plus.moveToPoint(CGPointMake(diameter / 3, diameter / 2))
+        plus.addLineToPoint(CGPointMake(diameter * 2 / 3, diameter / 2))
+        plus.moveToPoint(CGPointMake(diameter / 2, diameter / 3))
+        plus.addLineToPoint(CGPointMake(diameter / 2, diameter * 2 / 3))
+        let plusLayer = CAShapeLayer()
+        plusLayer.path = plus.CGPath
+        plusLayer.strokeColor = UIColor.whiteColor().CGColor
+        plusLayer.lineCap = kCALineCapRound
+        plusLayer.frame = CGRectMake(0, 0, diameter, diameter)
+        plusLayer.lineWidth = floor(0.07 * diameter)
+
+        let addButton: FabButton = FabButton()
+        addButton.depth = .None
+        addButton.tintColor = UIColor.fb_darkColor()
+        addButton.backgroundColor = UIColor.fb_darkColor()
+        addButton.layer.addSublayer(plusLayer)
+        addButton.addTarget(self, action: #selector(handleMenu), forControlEvents: .TouchUpInside)
+        menuView.addSubview(addButton)
+
+        var image: UIImage? = UIImage(named: "text-icon")?.imageWithRenderingMode(.AlwaysTemplate)
+        let textButton: FabButton = FabButton()
+        textButton.depth = .None
+        textButton.tintColor = UIColor.fb_darkColor()
+        textButton.pulseColor = UIColor.fb_darkColor()
+        textButton.borderColor = UIColor.fb_darkColor()
+        textButton.backgroundColor = MaterialColor.clear
+        textButton.borderWidth = 1
+        textButton.imageView?.contentMode = .ScaleAspectFit
+        textButton.imageEdgeInsets = UIEdgeInsetsMake(0, 12, 0, 12)
+        textButton.setImage(image, forState: .Normal)
+        textButton.addTarget(self, action: #selector(handleButton), forControlEvents: .TouchUpInside)
+        textButton.tag = 0
+        menuView.addSubview(textButton)
+
+        image = UIImage(named: "camera-icon")?.imageWithRenderingMode(.AlwaysTemplate)
+        let imageButton: FabButton = FabButton()
+        imageButton.depth = .None
+        imageButton.tintColor = UIColor.fb_darkColor()
+        imageButton.pulseColor = UIColor.fb_darkColor()
+        imageButton.borderColor = UIColor.fb_darkColor()
+        imageButton.backgroundColor = MaterialColor.clear
+        imageButton.borderWidth = 1
+        imageButton.imageView?.contentMode = .ScaleAspectFit
+        imageButton.imageEdgeInsets = UIEdgeInsetsMake(0, 12, 0, 12)
+        imageButton.setImage(image, forState: .Normal)
+        imageButton.addTarget(self, action: #selector(handleButton), forControlEvents: .TouchUpInside)
+        imageButton.tag = 1
+        menuView.addSubview(imageButton)
+
+        // Initialize the menu and setup the configuration options.
+        menuView.menu.direction = .Up
+        menuView.menu.baseViewSize = CGSizeMake(diameter + 1, diameter + 1)
+        menuView.menu.views = [addButton, textButton, imageButton]
+
+        view.addSubview(menuView)
+        menuView.frame = CGRectMake(0, 0, diameter, diameter)
+        menuView.center = CGPointMake(CGRectGetWidth(view.bounds) - diameter * 0.75, CGRectGetHeight(view.bounds) - diameter * 0.75)
+    }
+
+    private func initObservers() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(timelineWillShow), name: kTIMELINEVCWILLSHOW, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(timelineWillDismiss), name: kTIMELINEVCWILLDISMISS, object: nil)
     }
 }
