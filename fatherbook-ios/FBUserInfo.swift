@@ -35,6 +35,7 @@ enum FBUserRelation: Int {
 
 class FBUserInfo: NSObject {
     var account: String?
+    var password: String?
     var phone: String?
     var email: String?
     var nickname: String?
@@ -100,6 +101,7 @@ class FBUserInfo: NSObject {
     init(json: JSON) {
         super.init()
         account = json["account"].string ?? json["_id"].string
+        password = json["password"].string ?? ""
         phone = json["phone"].string
         email = json["email"].string
         nickname = json["nickname"].string

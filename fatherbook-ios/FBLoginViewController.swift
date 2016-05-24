@@ -13,6 +13,7 @@ import MBProgressHUD
 import UIColor_Hex_Swift
 import MZGoogleStyleButton
 import FXBlurView
+import SwiftyJSON
 
 private let inputAreaEdgeOffset: CGFloat = 20.0
 private let textFieldOffset: CGFloat = 10.0
@@ -343,7 +344,8 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
                 let outputInfo = FBApi.statusDescription(status).0
                 let isSuccess = FBApi.statusDescription(status).1
                 if isSuccess {
-                    let userInfoJSON = json[kUserInfo]
+                    var userInfoJSON = json[kUserInfo]
+                    userInfoJSON.appendIfDictionary(kPassword, json: JSON(self.passwordTextField.text!))
                     let user = FBUserInfo(json: userInfoJSON)
                     FBPersist.set(value: userInfoJSON.object, forKey: .UserInfo)
                     FBUserManager.sharedManager().user = user

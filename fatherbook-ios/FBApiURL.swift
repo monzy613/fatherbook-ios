@@ -45,9 +45,15 @@ var kFBApiFollowing: String {
     return "\(kFBBaseURL)/app.friend.following"
 }
 
+var kFBApiTimeline: String {
+    return "\(kFBBaseURL)/app.timeline.post"
+}
+
 let kAccount = "account"
 let kSearchString = "searchString"
 let kPassword = "password"
 let kUserInfo = "userInfo"
 let kTargetID = "targetID"
 let kFollowInfos = "follow_infos"
+let kImages = "images"
+let kText = "text"

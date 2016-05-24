@@ -23,10 +23,16 @@ protocol FBPageHeaderViewDelegate: class {
     func meButtonPressed(headerView headerView: FBPageHeaderView)
 }
 
+protocol FBPageHeaderViewDataSource: class {
+    func headerView(headerView: FBPageHeaderView, titleAtIndex index: Int) -> String
+}
+
 class FBPageHeaderView: UIView, UITextFieldDelegate {
     weak var delegate: FBPageHeaderViewDelegate?
+    weak var dataSource: FBPageHeaderViewDataSource?
 
     var pageTitleLabel: UILabel!
+    var loadingIndicator: UIActivityIndicatorView!
 
     var timelineButton: UIButton!
     var chatButton: UIButton!
@@ -51,6 +57,7 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         return CGRectGetHeight(timelineButton.bounds)
     }
     var openHeight: CGFloat = 0
+    var currentIndex = 0
 
 
     // MARK: init
@@ -72,6 +79,16 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     }
 
     // MARK: public
+    func startLoading() {
+        pageTitleLabel.text = "Loading..."
+        loadingIndicator.startAnimating()
+    }
+
+    func endLoading() {
+        loadingIndicator.stopAnimating()
+        pageTitleLabel.text = dataSource?.headerView(self, titleAtIndex: currentIndex) ?? "SOA"
+    }
+
     func endSearch() {
         searchButtonPressed(searchButton)
     }
@@ -103,6 +120,7 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     }
 
     func moveTo(index index: Int) {
+        currentIndex = index
         switch index {
         case 0:
             moveBarToButton(timelineButton)
@@ -148,6 +166,9 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
     }
 
     private func setSelected(sender: UIButton) {
+        if !loadingIndicator.isAnimating() {
+            pageTitleLabel.text = dataSource?.headerView(self, titleAtIndex: currentIndex) ?? "SOA"
+        }
         switch sender {
         case timelineButton:
             timelineButton.setImage(UIImage(named: "timeline-selected"), forState: .Normal)
@@ -181,6 +202,8 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         pageTitleLabel.font = UIFont.fb_defaultFontOfSize(20)
         pageTitleLabel.textColor = UIColor.whiteColor()
         pageTitleLabel.text = "Timeline"
+
+        loadingIndicator = UIActivityIndicatorView()
 
         searchButton = UIButton(type: .Custom)
         searchButton.addTarget(self, action: #selector(searchButtonPressed), forControlEvents: .TouchUpInside)
@@ -226,6 +249,7 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
         indicateBar.frame = CGRectMake(0, openHeight - 7, width / 4, 7)
 
         addSubview(pageTitleLabel)
+        addSubview(loadingIndicator)
         addSubview(searchButton)
         addSubview(searchTextField)
         addSubview(timelineButton)
@@ -243,6 +267,10 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
             make.left.equalTo(self).offset(20.0)
             make.bottom.equalTo(timelineButton.snp_top)
         }
+        loadingIndicator.snp_makeConstraints(closure: { (make) in
+            make.left.equalTo(pageTitleLabel.snp_right).offset(5.0)
+            make.centerY.equalTo(pageTitleLabel)
+        })
         searchButton.snp_makeConstraints { (make) in
             make.centerX.equalTo(meButton)
             make.centerY.equalTo(pageTitleLabel)
@@ -329,21 +357,25 @@ class FBPageHeaderView: UIView, UITextFieldDelegate {
 
     @objc private func timelineButtonPressed(sender: UIButton) {
         delegate?.timelineButtonPressed(headerView: self)
+        currentIndex = 0
         moveBarToButton(sender)
     }
 
     @objc private func chatButtonPressed(sender: UIButton) {
         delegate?.chatButtonPressed(headerView: self)
+        currentIndex = 1
         moveBarToButton(sender)
     }
 
     @objc private func contactButtonPressed(sender: UIButton) {
         delegate?.contactButtonPressed(headerView: self)
+        currentIndex = 2
         moveBarToButton(sender)
     }
 
     @objc private func meButtonPressed(sender: UIButton) {
         delegate?.meButtonPressed(headerView: self)
+        currentIndex = 3
         moveBarToButton(sender)
     }
 

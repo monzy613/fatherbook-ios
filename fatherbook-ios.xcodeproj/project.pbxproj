@@ -14,6 +14,7 @@
 		F42B2B261CE8D56800EEFB64 /* FBRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42B2B251CE8D56800EEFB64 /* FBRootViewController.swift */; };
 		F42B2B2A1CE8DB8B00EEFB64 /* FBScrollPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42B2B291CE8DB8B00EEFB64 /* FBScrollPageViewController.swift */; };
 		F42B2B2C1CE8E51100EEFB64 /* String_Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42B2B2B1CE8E51100EEFB64 /* String_Extension.swift */; };
+		F44AB34D1CF2C69D00A1D5E6 /* JSON+AppendOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F44AB34C1CF2C69D00A1D5E6 /* JSON+AppendOperation.swift */; };
 		F45EB4021CEDFBDA00D9777F /* FBChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F45EB4011CEDFBDA00D9777F /* FBChatViewController.swift */; };
 		F45EB4041CEDFE0B00D9777F /* FBLeftIconTitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F45EB4031CEDFE0B00D9777F /* FBLeftIconTitleTableViewCell.swift */; };
 		F45F87361CE9D5AF00575F68 /* FBButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F45F87351CE9D5AF00575F68 /* FBButtonTableViewCell.swift */; };
@@ -53,6 +54,8 @@
 		F42B2B251CE8D56800EEFB64 /* FBRootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBRootViewController.swift; sourceTree = "<group>"; };
 		F42B2B291CE8DB8B00EEFB64 /* FBScrollPageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBScrollPageViewController.swift; sourceTree = "<group>"; };
 		F42B2B2B1CE8E51100EEFB64 /* String_Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String_Extension.swift; sourceTree = "<group>"; };
+		F44AB34B1CF2BEDD00A1D5E6 /* Date.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Date.playground; sourceTree = "<group>"; };
+		F44AB34C1CF2C69D00A1D5E6 /* JSON+AppendOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "JSON+AppendOperation.swift"; sourceTree = "<group>"; };
 		F45EB4011CEDFBDA00D9777F /* FBChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBChatViewController.swift; sourceTree = "<group>"; };
 		F45EB4031CEDFE0B00D9777F /* FBLeftIconTitleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBLeftIconTitleTableViewCell.swift; sourceTree = "<group>"; };
 		F45F87351CE9D5AF00575F68 /* FBButtonTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBButtonTableViewCell.swift; sourceTree = "<group>"; };
@@ -163,6 +166,7 @@
 				F4D242141CDE76F8000D45FA /* LaunchScreen.storyboard */,
 				F4D242171CDE76F8000D45FA /* Info.plist */,
 				F46E404C1CE0A5CF00A45442 /* fatherbook-ios-Bridging-Header.h */,
+				F44AB34B1CF2BEDD00A1D5E6 /* Date.playground */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -193,6 +197,7 @@
 				F42B2B2B1CE8E51100EEFB64 /* String_Extension.swift */,
 				F45F87371CE9D78600575F68 /* Array_FBOperation.swift */,
 				F45F873B1CE9EC6300575F68 /* UIWindow+mainWindow.swift */,
+				F44AB34C1CF2C69D00A1D5E6 /* JSON+AppendOperation.swift */,
 				F4796C891CED639400A7BE78 /* FBPersist.swift */,
 			);
 			name = Utils;
@@ -356,6 +361,7 @@
 				F45F873E1CE9ED9200575F68 /* FBRCChatManager.swift in Sources */,
 				F4B654DA1CDEE31400E3ED5E /* FBApi.swift in Sources */,
 				F48350D41CE6EA4500203391 /* FBRecentChatListViewController.swift in Sources */,
+				F44AB34D1CF2C69D00A1D5E6 /* JSON+AppendOperation.swift in Sources */,
 				F4B654D61CDEE2DA00E3ED5E /* FBApiURL.swift in Sources */,
 				F410B5EC1CE07487008D9D01 /* MBProgressHUD_Extensions.swift in Sources */,
 				F42B2B2C1CE8E51100EEFB64 /* String_Extension.swift in Sources */,

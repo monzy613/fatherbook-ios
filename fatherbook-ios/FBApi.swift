@@ -36,8 +36,10 @@ class FBApi {
         "520": ("取消关注成功", true),
         "530": ("取消关注失败", false),
         "540": ("获取关注列表成功", true),
-        "550": ("获取关注列表失败", false)
+        "550": ("获取关注列表失败", false),
 
+        "600": ("timeline 发送成功", true),
+        "610": ("timeline 发送失败", false)
     ]
 
     class func statusDescription(code: String) -> (String, Bool) {
@@ -86,6 +88,39 @@ class FBApi {
                     success(json)
                 }
             }
+        }
+    }
+
+    class func fetchUserInfo(success: ((String) -> ())?, failure: ((String) -> ())?) {
+        guard let account = FBUserManager.sharedManager().user.account, let password = FBUserManager.sharedManager().user.password else {
+            failure?("000")
+            return
+        }
+        FBApi.post(withURL: kFBApiLogin, parameters: [
+                kAccount: account,
+                kPassword: password
+            ], success: { (json) -> (Void) in
+            print("login json: \(json)")
+            if let status = json["status"].string {
+                print(json["userInfo"])
+                let outputInfo = FBApi.statusDescription(status).0
+                let isSuccess = FBApi.statusDescription(status).1
+                if isSuccess {
+                    var userInfoJSON = json[kUserInfo]
+                    userInfoJSON.appendIfDictionary(kPassword, json: JSON(password))
+                    let user = FBUserInfo(json: userInfoJSON)
+                    FBPersist.set(value: userInfoJSON.object, forKey: .UserInfo)
+                    FBUserManager.sharedManager().user = user
+                    success?(outputInfo)
+                } else {
+                    failure?(outputInfo)
+                }
+            } else {
+                failure?("000")
+            }
+        }) { (error) -> (Void) in
+            failure?("000")
+            print("login error: \(error)")
         }
     }
 }

@@ -14,10 +14,11 @@ import FXBlurView
 import SIAlertView
 import Material
 
-class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate, FBTextTimelineViewDelegate {
+class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate, FBPageHeaderViewDataSource, FBTextTimelineViewDelegate {
     lazy var pageHeader: FBPageHeaderView = {
         let _pageHeader = FBPageHeaderView(width: CGRectGetWidth(self.view.bounds), openHeight: self.openHeaderHeight)
         _pageHeader.delegate = self
+        _pageHeader.dataSource = self
         return _pageHeader
     }()
 
@@ -90,6 +91,14 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
         }
 
         //fetch userInfo
+        pageHeader.startLoading()
+        FBApi.fetchUserInfo({ (statusCode) in
+            print(FBApi.statusDescription(statusCode))
+            self.pageHeader.endLoading()
+            }) { (statusCode) in
+                print(FBApi.statusDescription(statusCode))
+                self.pageHeader.endLoading()
+        }
 
         // setup subviews
         view.opaque = false
@@ -147,6 +156,16 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     // MARK: FBTextTimelineViewDelegate
     func sendButtonPressed(textEditor: FBTextTimelineView) {
         textEditor.dismiss()
+        FBApi.post(withURL: kFBApiTimeline,
+                   parameters: [
+                    kAccount: FBUserManager.sharedManager().user.account ?? "",
+                    kPassword: FBUserManager.sharedManager().user.password ?? "",
+                    kText: textEditor.textView.text],
+                   success: { (json) -> (Void) in
+                    print(json)
+            }) { (error) -> (Void) in
+
+        }
     }
 
     func cancelButtonPressed(textEditor: FBTextTimelineView) {
@@ -304,6 +323,24 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     }
 
     // MARK: dataSource
+    // MARK: FBPageHeaderDataSource
+    func headerView(headerView: FBPageHeaderView, titleAtIndex index: Int) -> String {
+        var result = ""
+        switch index {
+        case 0:
+            result = "Timeline"
+        case 1:
+            result = "Recent"
+        case 2:
+            result = "Following"
+        case 3:
+            result = "Me"
+        default:
+            break
+        }
+        return result
+    }
+
     // MARK: UITableViewDataSource
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1

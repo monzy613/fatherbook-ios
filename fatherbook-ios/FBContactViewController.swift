@@ -120,7 +120,6 @@ class FBContactViewController: UITableViewController {
 
     // MARK: Scroll view delegate
     override func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        print(scrollView.contentOffset.y - scrollViewLastContentOffset)
         if scrollView.contentOffset.y - scrollViewLastContentOffset > 0 {
             rootViewController?.closeHeader()
         } else if scrollView.contentOffset.y - scrollViewLastContentOffset < 0 {
