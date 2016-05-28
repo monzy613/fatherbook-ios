@@ -13,6 +13,23 @@ class FBTimelineView: UIView {
     var isRepost = false
     var hasImages = false
 
+    // MARK: config
+    func config(avatarURL url: NSURL?, nickname: String?, text: String?, imageURLs: [FBTimelineImage]) {
+        avatarImageView.sd_setImageWithURL(url, placeholderImage: UIImage(named: "placeholder"))
+        nicknameLabel.text = nickname
+        timelineTextLabel.text = text
+        switch imageURLs.count {
+        case 0:
+            return
+        case 1:
+            //imageView
+            break
+        default:
+            //imageCollectionView
+            break
+        }
+    }
+
     // MARK: init
     init(frame: CGRect, isRepost _isRepost: Bool) {
         super.init(frame: frame)
@@ -23,6 +40,7 @@ class FBTimelineView: UIView {
         addSubview(nicknameLabel)
         addSubview(timelineTextLabel)
         addSubview(imagesCollectionView)
+        addSubview(imageView)
         setupConstraints()
     }
     
@@ -52,6 +70,10 @@ class FBTimelineView: UIView {
         }
         imagesCollectionView.snp_makeConstraints { (make) in
             make.top.equalTo(timelineTextLabel.snp_bottom)
+            make.left.right.bottom.equalTo(imageView.snp_top)
+        }
+        imageView.snp_makeConstraints { (make) in
+            make.top.equalTo(imagesCollectionView.snp_bottom)
             make.left.right.bottom.equalTo(self)
         }
     }
@@ -80,9 +102,15 @@ class FBTimelineView: UIView {
         return label;
     }()
 
-    //optional
+    //optional: imagesCollectionView or imageView or none
     lazy var imagesCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
         return collectionView
+    }()
+
+    lazy var imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .ScaleAspectFill
+        return imageView
     }()
 }

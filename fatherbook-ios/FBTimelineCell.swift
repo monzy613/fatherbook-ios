@@ -14,9 +14,8 @@ class FBTimelineCell: UITableViewCell {
 
     // MARK: config
     func configWithTimeline(timeline: FBTimeline) {
-        mainTimelineView.avatarImageView.sd_setImageWithURL(NSURL(string: timeline.user?.avatarURL ?? ""), placeholderImage: UIImage(named: "placeholder"))
-        mainTimelineView.nicknameLabel.text = timeline.user?.nickname
-        mainTimelineView.timelineTextLabel.text = timeline.text
+        let avatarURL = NSURL(string: timeline.user?.avatarURL ?? "")
+        mainTimelineView.config(avatarURL: avatarURL, nickname: timeline.user?.nickname, text: timeline.text, imageURLs: timeline.images)
         if (timeline.isRepost) {
             //remake constraints with repost
         }

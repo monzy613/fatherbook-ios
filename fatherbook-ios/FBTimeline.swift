@@ -35,7 +35,7 @@ class FBTimeline: NSObject {
         user = FBUserInfo(json: json[kUserInfo])
         id = json[kID].stringValue
         text = json[kText].stringValue
-        repostCount = Int(json[kRepostCount].string ?? "0") ?? 0
+        repostCount = json[kRepostCount].intValue
         isRepost = json[kIsRepost].boolValue
         if let likedJSONs = json[kLiked].array {
             for userInfo in likedJSONs {
