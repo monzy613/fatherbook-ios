@@ -6,7 +6,6 @@
 //  Copyright © 2016年 MonzyZhang. All rights reserved.
 //
 
-import UIKit
 import SwiftyJSON
 
 /**

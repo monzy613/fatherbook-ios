@@ -39,13 +39,20 @@ class FBApi {
         "550": ("获取关注列表失败", false),
 
         "600": ("timeline 发送成功", true),
-        "610": ("timeline 发送失败", false)
+        "610": ("timeline 发送失败", false),
+        "620": ("timeline 获取成功", true),
+        "630": ("timeline 获取失败", false),
+
+        "640": ("点赞成功", true),
+        "650": ("点赞失败", false),
+        "660": ("取消点赞成功", true),
+        "670": ("取消点赞失败", false),
     ]
 
     class func statusDescription(code: String) -> (String, Bool) {
         let pair = statusDictionary[code]
         if pair == nil {
-            return ("no such status code", false)
+            return ("no such status code: \(code)", false)
         }
         return (pair!.0, pair!.1)
     }
@@ -100,7 +107,6 @@ class FBApi {
                 kAccount: account,
                 kPassword: password
             ], success: { (json) -> (Void) in
-            print("login json: \(json)")
             if let status = json["status"].string {
                 print(json["userInfo"])
                 let outputInfo = FBApi.statusDescription(status).0

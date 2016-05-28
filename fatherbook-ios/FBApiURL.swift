@@ -49,11 +49,24 @@ var kFBApiTimeline: String {
     return "\(kFBBaseURL)/app.timeline.post"
 }
 
+var kFBApiGetTimeline: String {
+    return "\(kFBBaseURL)/app.timeline.get"
+}
+
 let kAccount = "account"
 let kSearchString = "searchString"
 let kPassword = "password"
 let kUserInfo = "userInfo"
 let kTargetID = "targetID"
 let kFollowInfos = "follow_infos"
+let kTimelines = "timelines"
 let kImages = "images"
 let kText = "text"
+let kID = "_id"
+let kRepostCount = "repostCount"
+let kIsRepost = "isRepost"
+let kRepostTimeline = "repostTimeline"
+let kLiked = "liked"
+let kComments = "comments"
+let kIndex = "index"
+let kURL = "url"

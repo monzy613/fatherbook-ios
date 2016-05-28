@@ -25,8 +25,11 @@
 		F478BFE81CE3718C00F8F4DE /* FBTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F478BFE71CE3718C00F8F4DE /* FBTimelineViewController.swift */; };
 		F478BFEA1CE371BE00F8F4DE /* FBContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F478BFE91CE371BE00F8F4DE /* FBContactViewController.swift */; };
 		F478BFEC1CE371F700F8F4DE /* FBMeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F478BFEB1CE371F700F8F4DE /* FBMeViewController.swift */; };
+		F479091F1CF9A7DC00BB9EB7 /* FBTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F479091E1CF9A7DC00BB9EB7 /* FBTimelineView.swift */; };
+		F47909211CF9B19200BB9EB7 /* FBTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47909201CF9B19200BB9EB7 /* FBTimeline.swift */; };
 		F4796C8A1CED639400A7BE78 /* FBPersist.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4796C891CED639400A7BE78 /* FBPersist.swift */; };
 		F48350D41CE6EA4500203391 /* FBRecentChatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48350D31CE6EA4500203391 /* FBRecentChatListViewController.swift */; };
+		F4890DC01CF986A60029CEF8 /* FBTimelineCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4890DBF1CF986A60029CEF8 /* FBTimelineCell.swift */; };
 		F4903E1D1CE5F71400DD9AB5 /* FXBlurView_Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4903E1C1CE5F71400DD9AB5 /* FXBlurView_Extension.swift */; };
 		F4A10D801CE23D3A00DEC337 /* FBPageHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A10D7F1CE23D3A00DEC337 /* FBPageHeaderView.swift */; };
 		F4AA1FFE1CE4167400A2A4F7 /* FBUserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4AA1FFD1CE4167400A2A4F7 /* FBUserManager.swift */; };
@@ -67,8 +70,11 @@
 		F478BFE71CE3718C00F8F4DE /* FBTimelineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBTimelineViewController.swift; sourceTree = "<group>"; };
 		F478BFE91CE371BE00F8F4DE /* FBContactViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBContactViewController.swift; sourceTree = "<group>"; };
 		F478BFEB1CE371F700F8F4DE /* FBMeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBMeViewController.swift; sourceTree = "<group>"; };
+		F479091E1CF9A7DC00BB9EB7 /* FBTimelineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBTimelineView.swift; sourceTree = "<group>"; };
+		F47909201CF9B19200BB9EB7 /* FBTimeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBTimeline.swift; sourceTree = "<group>"; };
 		F4796C891CED639400A7BE78 /* FBPersist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBPersist.swift; sourceTree = "<group>"; };
 		F48350D31CE6EA4500203391 /* FBRecentChatListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBRecentChatListViewController.swift; sourceTree = "<group>"; };
+		F4890DBF1CF986A60029CEF8 /* FBTimelineCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBTimelineCell.swift; sourceTree = "<group>"; };
 		F4903E1C1CE5F71400DD9AB5 /* FXBlurView_Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FXBlurView_Extension.swift; sourceTree = "<group>"; };
 		F4A10D7F1CE23D3A00DEC337 /* FBPageHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBPageHeaderView.swift; sourceTree = "<group>"; };
 		F4AA1FFD1CE4167400A2A4F7 /* FBUserManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBUserManager.swift; sourceTree = "<group>"; };
@@ -121,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				F410B5EE1CE0875F008D9D01 /* FBUserInfo.swift */,
+				F47909201CF9B19200BB9EB7 /* FBTimeline.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -145,6 +152,8 @@
 				F45F87351CE9D5AF00575F68 /* FBButtonTableViewCell.swift */,
 				F45EB4031CEDFE0B00D9777F /* FBLeftIconTitleTableViewCell.swift */,
 				F4C8B9B11CF210E100A7FBA9 /* FBTextTimelineView.swift */,
+				F479091E1CF9A7DC00BB9EB7 /* FBTimelineView.swift */,
+				F4890DBF1CF986A60029CEF8 /* FBTimelineCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -372,6 +381,7 @@
 				F410B5E81CE05F8C008D9D01 /* FBViewGenerator.swift in Sources */,
 				F4A10D801CE23D3A00DEC337 /* FBPageHeaderView.swift in Sources */,
 				F45F873C1CE9EC6300575F68 /* UIWindow+mainWindow.swift in Sources */,
+				F4890DC01CF986A60029CEF8 /* FBTimelineCell.swift in Sources */,
 				F478BFEC1CE371F700F8F4DE /* FBMeViewController.swift in Sources */,
 				F4903E1D1CE5F71400DD9AB5 /* FXBlurView_Extension.swift in Sources */,
 				F4AA20001CE41E8100A2A4F7 /* FBUserTableViewCell.swift in Sources */,
@@ -381,6 +391,7 @@
 				F476E5561CE98E2C008B53D5 /* FBUserInfoViewController.swift in Sources */,
 				F45F87361CE9D5AF00575F68 /* FBButtonTableViewCell.swift in Sources */,
 				F45F87381CE9D78600575F68 /* Array_FBOperation.swift in Sources */,
+				F47909211CF9B19200BB9EB7 /* FBTimeline.swift in Sources */,
 				F478BFEA1CE371BE00F8F4DE /* FBContactViewController.swift in Sources */,
 				F4B654D81CDEE2F300E3ED5E /* FBConsts.swift in Sources */,
 				F410B5EF1CE0875F008D9D01 /* FBUserInfo.swift in Sources */,
@@ -388,6 +399,7 @@
 				F4C8B9B21CF210E100A7FBA9 /* FBTextTimelineView.swift in Sources */,
 				F4B654DC1CDEF0C600E3ED5E /* FBLoginViewController.swift in Sources */,
 				F478BFE81CE3718C00F8F4DE /* FBTimelineViewController.swift in Sources */,
+				F479091F1CF9A7DC00BB9EB7 /* FBTimelineView.swift in Sources */,
 				F42B2B261CE8D56800EEFB64 /* FBRootViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

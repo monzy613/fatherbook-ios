@@ -336,11 +336,9 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
         loginIndicator.startAnimating()
         sender.enabled = false
         FBApi.post(withURL: kFBApiLogin, parameters: loginParameters(), success: { (json) -> (Void) in
-            print("login json: \(json)")
             self.loginIndicator.stopAnimating()
             sender.enabled = true
             if let status = json["status"].string {
-                print(json["userInfo"])
                 let outputInfo = FBApi.statusDescription(status).0
                 let isSuccess = FBApi.statusDescription(status).1
                 if isSuccess {
@@ -375,7 +373,6 @@ class FBLoginViewController: UIViewController, UITextFieldDelegate {
     func submitRegister(sender: UIButton) {
         let parameters = registerParameters()
         FBApi.post(withURL: kFBApiRegister, parameters: parameters, success: { (json) -> (Void) in
-            print("register json: \(json)")
             if let status = json["status"].string {
                 let outputInfo = FBApi.statusDescription(status).0
                 let isSuccess = FBApi.statusDescription(status).1

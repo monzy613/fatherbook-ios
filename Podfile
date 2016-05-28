@@ -18,6 +18,7 @@ target 'fatherbook-ios' do
 	pod 'BUKPhotoEditViewController'
 	pod 'SDWebImage'
 	pod 'Material', '~> 1.0'
+	pod 'UITableView+FDTemplateLayoutCell'
 
 	#RongCloud
 	pod 'RongCloudIMKit'
