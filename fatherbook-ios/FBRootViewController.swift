@@ -156,7 +156,7 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     // MARK: FBTextTimelineViewDelegate
     func sendButtonPressed(textEditor: FBTextTimelineView) {
         textEditor.dismiss()
-        FBApi.post(withURL: kFBApiTimeline,
+        FBApi.post(withURL: kFBApiPostTimeline,
                    parameters: [
                     kAccount: FBUserManager.sharedManager().user.account ?? "",
                     kPassword: FBUserManager.sharedManager().user.password ?? "",

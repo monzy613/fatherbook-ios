@@ -11,9 +11,11 @@ import SnapKit
 import SDWebImage
 
 class FBTimelineCell: UITableViewCell {
+    var timeline: FBTimeline!
 
     // MARK: config
     func configWithTimeline(timeline: FBTimeline) {
+        self.timeline = timeline
         let avatarURL = NSURL(string: timeline.user?.avatarURL ?? "")
         mainTimelineView.config(avatarURL: avatarURL, nickname: timeline.user?.nickname, text: timeline.text, imageURLs: timeline.images)
         if (timeline.isRepost) {
@@ -58,11 +60,20 @@ class FBTimelineCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        mainTimelineView.clear()
+        if timeline != nil && timeline.isRepost {
+            repostTimelineView.clear()
+        }
+    }
+
     // MARK: private
     private func setupConstraints() {
         mainTimelineView.snp_makeConstraints { (make) in
             make.top.left.right.equalTo(contentView)
         }
+
         actionButton.snp_makeConstraints { (make) in
             make.top.equalTo(mainTimelineView.snp_bottom).offset(10.0)
             make.right.bottom.equalTo(contentView).inset(10.0)

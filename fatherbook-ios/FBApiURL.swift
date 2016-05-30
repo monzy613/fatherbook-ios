@@ -45,7 +45,7 @@ var kFBApiFollowing: String {
     return "\(kFBBaseURL)/app.friend.following"
 }
 
-var kFBApiTimeline: String {
+var kFBApiPostTimeline: String {
     return "\(kFBBaseURL)/app.timeline.post"
 }
 
@@ -68,5 +68,8 @@ let kIsRepost = "isRepost"
 let kRepostTimeline = "repostTimeline"
 let kLiked = "liked"
 let kComments = "comments"
+
 let kIndex = "index"
 let kURL = "url"
+let kWidth = "width"
+let kHeight = "height"

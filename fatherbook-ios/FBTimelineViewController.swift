@@ -79,7 +79,6 @@ class FBTimelineViewController: UITableViewController {
             if let timelineJSONs = json[kTimelines].array {
                 self.timelines.removeAll()
                 for timelineJSON in timelineJSONs {
-                    print(timelineJSON)
                     self.timelines.append(FBTimeline(json: timelineJSON))
                 }
                 self.tableView.reloadData()

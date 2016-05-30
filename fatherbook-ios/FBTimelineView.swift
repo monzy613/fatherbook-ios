@@ -7,25 +7,53 @@
 //
 
 import UIKit
+import SDWebImage
 
-class FBTimelineView: UIView {
+private let imageSpace: CGFloat = 10.0
+private let imageCellHeightAmountMoreThan4 = (CGRectGetWidth(UIScreen.mainScreen().bounds) - imageSpace * 4) / 3
+private let imageCellHeightAmountEqualToOrLessThan4 = (CGRectGetWidth(UIScreen.mainScreen().bounds) - imageSpace * 3) / 2
+
+class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     private let avatarWidth: CGFloat = 50.0
+    private var imageURLs = [FBTimelineImage]()
     var isRepost = false
     var hasImages = false
 
     // MARK: config
     func config(avatarURL url: NSURL?, nickname: String?, text: String?, imageURLs: [FBTimelineImage]) {
+        imagesCollectionView.delegate = self
+        imagesCollectionView.dataSource = self
         avatarImageView.sd_setImageWithURL(url, placeholderImage: UIImage(named: "placeholder"))
         nicknameLabel.text = nickname
         timelineTextLabel.text = text
+        self.imageURLs = imageURLs
         switch imageURLs.count {
         case 0:
             return
         case 1:
             //imageView
+            let imageItem = imageURLs.fb_safeObjectAtIndex(0)
+            imageView.sd_setImageWithURL(imageItem?.imageURL, placeholderImage: UIImage(named: "placeholder"))
+            let size = imageItem?.imageSize ?? CGSizeZero
+            if size.width != 0 && size.height != 0 {
+                self.imageView.snp_remakeConstraints { (make) in
+                    make.top.equalTo(self.timelineTextLabel.snp_bottom).offset(10.0)
+                    make.width.equalTo(self).multipliedBy(0.4)
+                    make.height.equalTo(self.imageView.snp_width).multipliedBy(size.height / size.width)
+                    make.left.equalTo(self).inset(10.0)
+                    make.bottom.equalTo(self)
+                }
+            }
             break
         default:
             //imageCollectionView
+            self.imagesCollectionView.snp_remakeConstraints(closure: { (make) in
+                make.top.equalTo(self.timelineTextLabel.snp_bottom).offset(10.0)
+                make.left.right.equalTo(self)
+                make.height.equalTo(imageCollectionViewHeight())
+                make.bottom.equalTo(self)
+            })
+            imagesCollectionView.reloadData()
             break
         }
     }
@@ -48,6 +76,52 @@ class FBTimelineView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func clear() {
+        avatarImageView.image = nil
+        nicknameLabel.text = ""
+        timelineTextLabel.text = ""
+        imageView.image = nil
+        imagesCollectionView.delegate = nil
+        imagesCollectionView.dataSource = nil
+        imagesCollectionView.snp_remakeConstraints { (make) in
+            make.top.equalTo(timelineTextLabel.snp_bottom)
+            make.height.equalTo(0)
+        }
+        imageView.snp_remakeConstraints { (make) in
+            make.top.equalTo(timelineTextLabel.snp_bottom)
+            make.left.right.bottom.equalTo(self)
+        }
+    }
+
+    // MARK: - delegate -
+    // MARK: UICollectionViewDelegate
+
+    // MARK: UICollectionViewDelegateFlowLayout
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        let cellHeight = imageCellHeight()
+        return CGSizeMake(cellHeight, cellHeight)
+    }
+
+    // MARK: - dataSource -
+    // MARK: UICollectionViewDataSource
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return 1
+    }
+
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return imageURLs.count
+    }
+
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let cell = imagesCollectionView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(FBImageViewCell.self), forIndexPath: indexPath) as! FBImageViewCell
+        cell.imageView.sd_setImageWithURL(imageURLs.fb_safeObjectAtIndex(indexPath.row)?.imageURL, placeholderImage: UIImage(named: "placeholder"))
+        return cell
+    }
+
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        return UIEdgeInsetsMake(10, 10, 10, 10)
+    }
+
     // MARK: private
     func setupConstraints() {
         if !isRepost {
@@ -65,16 +139,35 @@ class FBTimelineView: UIView {
             make.top.equalTo(self).offset(10.0)
         }
         timelineTextLabel.snp_makeConstraints { (make) in
-            make.top.equalTo(nicknameLabel.snp_bottom).offset(avatarWidth)
+            if !isRepost {
+                make.top.equalTo(avatarImageView.snp_bottom).offset(10.0)
+            } else {
+                make.top.equalTo(nicknameLabel.snp_bottom).offset(10.0)
+            }
             make.left.right.equalTo(self).inset(10.0)
         }
-        imagesCollectionView.snp_makeConstraints { (make) in
-            make.top.equalTo(timelineTextLabel.snp_bottom)
-            make.left.right.bottom.equalTo(imageView.snp_top)
+    }
+
+    private func imageCollectionViewHeight() -> CGFloat {
+        var height: CGFloat = 0.0
+        var rowCount: CGFloat = 0.0
+        let imageCount = imageURLs.count
+        if imageCount > 4 {
+            //3 a row
+            rowCount = CGFloat(ceil(Float(imageCount) / 3.0))
+        } else {
+            //2 a row
+            rowCount = CGFloat(ceil(Float(imageCount) / 2.0))
         }
-        imageView.snp_makeConstraints { (make) in
-            make.top.equalTo(imagesCollectionView.snp_bottom)
-            make.left.right.bottom.equalTo(self)
+        height = rowCount * imageCellHeight() + (rowCount + 1) * imageSpace
+        return height
+    }
+
+    private func imageCellHeight() -> CGFloat {
+        if imageURLs.count > 4 {
+            return imageCellHeightAmountMoreThan4
+        } else {
+            return imageCellHeightAmountEqualToOrLessThan4
         }
     }
 
@@ -97,6 +190,7 @@ class FBTimelineView: UIView {
     lazy var timelineTextLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
+        label.lineBreakMode = .ByWordWrapping
         label.textColor = UIColor.blackColor()
         label.font = UIFont.fb_defaultFontOfSize(14)
         return label;
@@ -105,12 +199,15 @@ class FBTimelineView: UIView {
     //optional: imagesCollectionView or imageView or none
     lazy var imagesCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.registerClass(FBImageViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(FBImageViewCell.self))
+        collectionView.backgroundColor = UIColor.clearColor()
         return collectionView
     }()
 
     lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .ScaleAspectFill
+        imageView.contentMode = .ScaleAspectFit
+        imageView.clipsToBounds = true
         return imageView
     }()
 }

@@ -11,10 +11,14 @@ import SwiftyJSON
 class FBTimelineImage {
     var index = 0
     var imageURL: NSURL?
+    var imageSize = CGSizeZero
 
     init(json: JSON) {
         index = Int(json[kIndex].string ?? "0") ?? 0
         imageURL = NSURL(string: json[kURL].stringValue)
+        let width = CGFloat(json[kWidth].double ?? 0.0)
+        let height = CGFloat(json[kHeight].double ?? 0.0)
+        self.imageSize = CGSizeMake(width, height)
     }
 }
 
