@@ -13,6 +13,7 @@ import MZGoogleStyleButton
 import FXBlurView
 import SIAlertView
 import Material
+import SwiftyJSON
 
 class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UITableViewDelegate, UITableViewDataSource, FBPageHeaderViewDelegate, FBPageHeaderViewDataSource, FBTextTimelineViewDelegate {
     lazy var pageHeader: FBPageHeaderView = {
@@ -156,11 +157,14 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     // MARK: FBTextTimelineViewDelegate
     func sendButtonPressed(textEditor: FBTextTimelineView) {
         textEditor.dismiss()
+//        let imageJSONs = JSON(arrayLiteral: [kIndex: 0, kWidth: 300, kHeight: 256], [kIndex: 1, kWidth: 300, kHeight: 256])
+//        let imageJSONsString = imageJSONs.rawString()
         FBApi.post(withURL: kFBApiPostTimeline,
                    parameters: [
                     kAccount: FBUserManager.sharedManager().user.account ?? "",
                     kPassword: FBUserManager.sharedManager().user.password ?? "",
-                    kText: textEditor.textView.text],
+                    kText: textEditor.textView.text,
+            ],
                    success: { (json) -> (Void) in
                     print(json)
             }) { (error) -> (Void) in

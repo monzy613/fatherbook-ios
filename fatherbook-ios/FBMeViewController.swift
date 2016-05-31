@@ -10,6 +10,8 @@ import UIKit
 import Qiniu
 
 class FBMeViewController: UITableViewController {
+
+    // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
@@ -19,13 +21,14 @@ class FBMeViewController: UITableViewController {
     // MARK: - delegate
     // MARK: FBUserTableViewCell delegate
     func avatarTouched(cell: FBUserTableViewCell) {
-        let token = "hXxhiug5AmKnXTSGECNFWy2Bo0QRzrDqo7bst8rS:lyCyA4jWzvdUuHaApbvuCTXdNWA=:eyJzY29wZSI6ImZhdGhlcmJvb2s6aGVsbG8udHh0IiwiZGVhZGxpbmUiOjE0NjM2NzM3NzR9"
-        let upManager = QNUploadManager()
-        let data = "Hello, world".dataUsingEncoding(NSUTF8StringEncoding)
-        upManager.putData(data, key: "hello.txt", token: token, complete: { (info, key, response) in
-            print(info)
-            print(response)
-            }, option: nil)
+//        let token = "hXxhiug5AmKnXTSGECNFWy2Bo0QRzrDqo7bst8rS:lyCyA4jWzvdUuHaApbvuCTXdNWA=:eyJzY29wZSI6ImZhdGhlcmJvb2s6aGVsbG8udHh0IiwiZGVhZGxpbmUiOjE0NjM2NzM3NzR9"
+//        let upManager = QNUploadManager()
+//        let image = UIImage(named: "setting")!
+//        let data = UIImagePNGRepresentation(image)
+//        upManager.putData(data, key: "hello.txt", token: token, complete: { (info, key, response) in
+//            print(info)
+//            print(response)
+//            }, option: nil)
     }
 
     // MARK: TableViewdelegate

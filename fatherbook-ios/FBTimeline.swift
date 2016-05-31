@@ -24,7 +24,7 @@ class FBTimelineImage {
 
 class FBTimeline: NSObject {
     var user: FBUserInfo?
-    var id: String?
+    var id: Int = -1
     var timeStamp: String?
     var repostCount: Int = 0
     var isRepost = false
@@ -37,7 +37,7 @@ class FBTimeline: NSObject {
     init(json: JSON) {
         super.init()
         user = FBUserInfo(json: json[kUserInfo])
-        id = json[kID].stringValue
+        id = json[kID].int ?? -1
         text = json[kText].stringValue
         repostCount = json[kRepostCount].intValue
         isRepost = json[kIsRepost].boolValue

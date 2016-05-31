@@ -56,7 +56,7 @@ class FBTimelineViewController: UITableViewController {
 
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return tableView.fd_heightForCellWithIdentifier(NSStringFromClass(FBTimelineCell.self), cacheByIndexPath: indexPath, configuration: {
-            [unowned self] (cell) in
+            (cell) in
             if let timeline = self.timelines.fb_safeObjectAtIndex(indexPath.row) {
                 (cell as? FBTimelineCell)?.configWithTimeline(timeline)
             }
@@ -74,17 +74,20 @@ class FBTimelineViewController: UITableViewController {
     // MARK: load
     @objc private func loadTimelines() {
         FBApi.get(withURL: kFBApiGetTimeline, parameters: [kAccount : "adm"], success: {
-            [unowned self] (json) -> (Void) in
+            (json) -> (Void) in
             self.refreshControl?.endRefreshing()
             if let timelineJSONs = json[kTimelines].array {
                 self.timelines.removeAll()
                 for timelineJSON in timelineJSONs {
                     self.timelines.append(FBTimeline(json: timelineJSON))
                 }
+                self.timelines.sortInPlace({ (timeline1, timeline2) -> Bool in
+                    return timeline1.id > timeline2.id
+                })
                 self.tableView.reloadData()
             }
             }) {
-                [unowned self] (err) -> (Void) in
+                (err) -> (Void) in
                 self.refreshControl?.endRefreshing()
                 print(err)
         }

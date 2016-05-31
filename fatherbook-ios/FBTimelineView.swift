@@ -20,10 +20,12 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
     var hasImages = false
 
     // MARK: config
-    func config(avatarURL url: NSURL?, nickname: String?, text: String?, imageURLs: [FBTimelineImage]) {
+    func config(avatarURL url: NSURL? = nil, nickname: String?, text: String?, imageURLs: [FBTimelineImage]) {
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
-        avatarImageView.sd_setImageWithURL(url, placeholderImage: UIImage(named: "placeholder"))
+        if url != nil {
+            avatarImageView.sd_setImageWithURL(url, placeholderImage: UIImage(named: "placeholder"))
+        }
         nicknameLabel.text = nickname
         timelineTextLabel.text = text
         self.imageURLs = imageURLs
@@ -48,7 +50,7 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
         default:
             //imageCollectionView
             self.imagesCollectionView.snp_remakeConstraints(closure: { (make) in
-                make.top.equalTo(self.timelineTextLabel.snp_bottom).offset(10.0)
+                make.top.equalTo(self.timelineTextLabel.snp_bottom)
                 make.left.right.equalTo(self)
                 make.height.equalTo(imageCollectionViewHeight())
                 make.bottom.equalTo(self)
@@ -62,9 +64,12 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
     init(frame: CGRect, isRepost _isRepost: Bool) {
         super.init(frame: frame)
         isRepost = _isRepost
+        var bgColor = UIColor.fb_lightGrayColor()
         if !isRepost {
             addSubview(avatarImageView)
+            bgColor = UIColor.whiteColor()
         }
+        backgroundColor = bgColor
         addSubview(nicknameLabel)
         addSubview(timelineTextLabel)
         addSubview(imagesCollectionView)
@@ -200,6 +205,7 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
     lazy var imagesCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.registerClass(FBImageViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(FBImageViewCell.self))
+        collectionView.scrollEnabled = false
         collectionView.backgroundColor = UIColor.clearColor()
         return collectionView
     }()
