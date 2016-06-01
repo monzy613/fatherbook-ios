@@ -53,6 +53,10 @@ var kFBApiGetTimeline: String {
     return "\(kFBBaseURL)/app.timeline.get"
 }
 
+var kFBApiChangeAvatar: String {
+    return "\(kFBBaseURL)/app.changeavatar"
+}
+
 let kAccount = "account"
 let kSearchString = "searchString"
 let kPassword = "password"
@@ -73,3 +77,8 @@ let kIndex = "index"
 let kURL = "url"
 let kWidth = "width"
 let kHeight = "height"
+
+let kToken = "token"
+let kTokens = "tokens"
+let kFilename = "filename"
+let kConfig = "config"

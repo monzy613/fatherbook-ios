@@ -9,7 +9,7 @@
 import UIKit
 import Qiniu
 
-class FBMeViewController: UITableViewController {
+class FBMeViewController: UITableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     // MARK: - life cycle
     override func viewDidLoad() {
@@ -21,17 +21,35 @@ class FBMeViewController: UITableViewController {
     // MARK: - delegate
     // MARK: FBUserTableViewCell delegate
     func avatarTouched(cell: FBUserTableViewCell) {
-//        let token = "hXxhiug5AmKnXTSGECNFWy2Bo0QRzrDqo7bst8rS:lyCyA4jWzvdUuHaApbvuCTXdNWA=:eyJzY29wZSI6ImZhdGhlcmJvb2s6aGVsbG8udHh0IiwiZGVhZGxpbmUiOjE0NjM2NzM3NzR9"
-//        let upManager = QNUploadManager()
-//        let image = UIImage(named: "setting")!
-//        let data = UIImagePNGRepresentation(image)
-//        upManager.putData(data, key: "hello.txt", token: token, complete: { (info, key, response) in
-//            print(info)
-//            print(response)
-//            }, option: nil)
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        presentViewController(imagePicker, animated: true, completion: nil)
     }
 
-    // MARK: TableViewdelegate
+
+    // MARK: - delegate -
+    // MARK: - UIImagePickerControllerDelegate
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
+        picker.dismissViewControllerAnimated(true, completion: nil)
+        FBApi.post(withURL: kFBApiChangeAvatar, parameters: [kAccount: FBUserManager.sharedManager().user.account!], success: { (json) -> (Void) in
+            if let token = json[kToken].string, let filename = json[kFilename].string {
+                let upManager = QNUploadManager()
+                let data = UIImageJPEGRepresentation(image, 1.0)
+                upManager.putData(data, key: filename, token: token, complete: { (info, key, response) in
+                    if let info = info {
+                        print("info: \(info)")
+                    }
+                    if let res = response {
+                        print("res: \(res)")
+                    }
+                    }, option: nil)
+            }
+            }) { (err) -> (Void) in
+                print("err in \(kFBApiChangeAvatar): \(err)")
+        }
+    }
+
+    // MARK: - TableViewdelegate
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }

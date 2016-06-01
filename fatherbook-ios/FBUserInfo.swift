@@ -40,7 +40,12 @@ class FBUserInfo: NSObject {
     var nickname: String?
     var relation: FBUserRelation = .Me
     var followInfos: [FBUserInfo]?
-    var avatarURL: String?
+    var _avatarURL: String?
+    var avatarURL: String {
+        get {
+            return FBAppConfigManager.sharedManager().avatarURL(withName: _avatarURL ?? "")
+        }
+    }
 
     func setFollowInfos(withJSON json: JSON) {
         if let follow_infos = json.array {
@@ -104,7 +109,7 @@ class FBUserInfo: NSObject {
         phone = json["phone"].string
         email = json["email"].string
         nickname = json["nickname"].string
-        avatarURL = json["avatarURL"].string
+        _avatarURL = json["avatarURL"].string
         setFollowInfos(withJSON: json[kFollowInfos])
         //set relation
         let type = json["type"].int ?? 0

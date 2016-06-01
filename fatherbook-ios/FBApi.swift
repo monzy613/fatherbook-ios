@@ -117,6 +117,7 @@ class FBApi {
                     let user = FBUserInfo(json: userInfoJSON)
                     FBPersist.set(value: userInfoJSON.object, forKey: .UserInfo)
                     FBUserManager.sharedManager().user = user
+                    FBAppConfigManager.initSharedManager(withJSON: json[kConfig])
                     success?(outputInfo)
                 } else {
                     failure?(outputInfo)

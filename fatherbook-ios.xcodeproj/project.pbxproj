@@ -46,6 +46,7 @@
 		F4D242131CDE76F8000D45FA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4D242121CDE76F8000D45FA /* Assets.xcassets */; };
 		F4D242161CDE76F8000D45FA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4D242141CDE76F8000D45FA /* LaunchScreen.storyboard */; };
 		F4E03B1C1CFC867F001235BB /* FBImageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E03B1B1CFC867F001235BB /* FBImageViewCell.swift */; };
+		F4EB2DFA1CFF28A800996BDD /* FBAppConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EB2DF91CFF28A800996BDD /* FBAppConfigManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -94,6 +95,7 @@
 		F4D242151CDE76F8000D45FA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F4D242171CDE76F8000D45FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F4E03B1B1CFC867F001235BB /* FBImageViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBImageViewCell.swift; sourceTree = "<group>"; };
+		F4EB2DF91CFF28A800996BDD /* FBAppConfigManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBAppConfigManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 			children = (
 				F45F873D1CE9ED9200575F68 /* FBRCChatManager.swift */,
 				F4AA1FFD1CE4167400A2A4F7 /* FBUserManager.swift */,
+				F4EB2DF91CFF28A800996BDD /* FBAppConfigManager.swift */,
 			);
 			name = Manager;
 			sourceTree = "<group>";
@@ -381,6 +384,7 @@
 				F42B2B2A1CE8DB8B00EEFB64 /* FBScrollPageViewController.swift in Sources */,
 				F45EB4041CEDFE0B00D9777F /* FBLeftIconTitleTableViewCell.swift in Sources */,
 				F4C3808D1CE9BD9A00E4EA5F /* FBAlbumPreviewTableViewCell.swift in Sources */,
+				F4EB2DFA1CFF28A800996BDD /* FBAppConfigManager.swift in Sources */,
 				F45EB4021CEDFBDA00D9777F /* FBChatViewController.swift in Sources */,
 				F410B5E81CE05F8C008D9D01 /* FBViewGenerator.swift in Sources */,
 				F4A10D801CE23D3A00DEC337 /* FBPageHeaderView.swift in Sources */,
