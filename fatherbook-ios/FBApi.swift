@@ -112,12 +112,12 @@ class FBApi {
                 let outputInfo = FBApi.statusDescription(status).0
                 let isSuccess = FBApi.statusDescription(status).1
                 if isSuccess {
+                    FBAppConfigManager.initSharedManager(withJSON: json[kConfig])
                     var userInfoJSON = json[kUserInfo]
                     userInfoJSON.appendIfDictionary(kPassword, json: JSON(password))
                     let user = FBUserInfo(json: userInfoJSON)
                     FBPersist.set(value: userInfoJSON.object, forKey: .UserInfo)
                     FBUserManager.sharedManager().user = user
-                    FBAppConfigManager.initSharedManager(withJSON: json[kConfig])
                     success?(outputInfo)
                 } else {
                     failure?(outputInfo)
