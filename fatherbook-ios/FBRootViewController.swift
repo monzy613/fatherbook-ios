@@ -487,17 +487,15 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     private func toggleResult() {
         // TODO: blur view may not dismiss on simulator because of NSTimer
         if searchResultToggled {
-            searchBlurView?.blurAnimation(from: 40.0, to: 0.0, duration: 0.25, completion: {
-                self.searchBlurView?.alpha = 0.0
-                self.searchBlurView?.removeFromSuperview()
-                self.searchBlurView = nil
-            })
             UIView.animateWithDuration(0.25, animations: {
+                self.searchBlurView?.alpha = 0.0
                 self.searchResultView?.alpha = 0.0
                 }, completion: { (finished) in
                     self.searchResultDataSource = []
                     self.searchResultView?.removeFromSuperview()
                     self.searchResultView = nil
+                    self.searchBlurView?.removeFromSuperview()
+                    self.searchBlurView = nil
             })
         } else {
             if searchResultView == nil {
@@ -520,10 +518,10 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
                 searchBlurView!.tintColor = UIColor.blackColor()
                 view.insertSubview(searchBlurView!, belowSubview: searchResultView!)
             }
+            searchBlurView?.alpha = 0.0
             searchResultView?.alpha = 0.0
-            searchBlurView?.alpha = 1.0
-            searchBlurView!.blurAnimation(from: 0.0, to: 40.0, duration: 0.25, completion: nil)
             UIView.animateWithDuration(0.25, animations: {
+                self.searchBlurView?.alpha = 1.0
                 self.searchResultView?.alpha = 1.0
             })
         }
