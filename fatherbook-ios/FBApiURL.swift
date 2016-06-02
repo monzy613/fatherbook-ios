@@ -57,6 +57,10 @@ var kFBApiChangeAvatar: String {
     return "\(kFBBaseURL)/app.changeavatar"
 }
 
+var kFBApiGetTimelineByFollowing: String {
+    return "\(kFBBaseURL)/app.timeline.getByFollowing"
+}
+
 let kAccount = "account"
 let kSearchString = "searchString"
 let kPassword = "password"
@@ -82,3 +86,6 @@ let kToken = "token"
 let kTokens = "tokens"
 let kFilename = "filename"
 let kConfig = "config"
+
+let kMaxID = "maxID"
+let kCount = "count"

@@ -49,7 +49,8 @@ class FBTimelineViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FBTimelineCell.self), forIndexPath: indexPath) as! FBTimelineCell
         if let timeline = timelines.fb_safeObjectAtIndex(indexPath.row) {
-            cell.configWithTimeline(timeline)
+            cell.indexPath = indexPath
+            cell.configWithTimeline(timeline, indexPath: indexPath)
         }
         return cell
     }
@@ -58,7 +59,8 @@ class FBTimelineViewController: UITableViewController {
         return tableView.fd_heightForCellWithIdentifier(NSStringFromClass(FBTimelineCell.self), cacheByIndexPath: indexPath, configuration: {
             (cell) in
             if let timeline = self.timelines.fb_safeObjectAtIndex(indexPath.row) {
-                (cell as? FBTimelineCell)?.configWithTimeline(timeline)
+                (cell as? FBTimelineCell)?.indexPath = indexPath
+                (cell as? FBTimelineCell)?.configWithTimeline(timeline, indexPath: indexPath)
             }
         })
     }
@@ -73,7 +75,13 @@ class FBTimelineViewController: UITableViewController {
 
     // MARK: load
     @objc private func loadTimelines() {
-        FBApi.get(withURL: kFBApiGetTimeline, parameters: [kAccount : "adm"], success: {
+        guard let account = FBUserManager.sharedManager().user.account else {
+            return
+        }
+        FBApi.get(withURL: kFBApiGetTimelineByFollowing, parameters: [
+            kAccount: account,
+            kCount: 10
+            ], success: {
             (json) -> (Void) in
             self.refreshControl?.endRefreshing()
             if let timelineJSONs = json[kTimelines].array {

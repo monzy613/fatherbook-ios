@@ -509,14 +509,17 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
                 view.addSubview(searchResultView!)
                 searchResultView?.snp_makeConstraints(closure: { (make) in
                     make.left.right.bottom.equalTo(view)
-                    make.top.equalTo(view).offset(pageHeader.closeHeight)
+                    make.top.equalTo(pageHeader.searchTextField.snp_bottom)
                 })
             }
             if searchBlurView == nil {
-                let blurFrame = CGRectMake(0, pageHeader.closeHeight, CGRectGetWidth(view.bounds), CGRectGetHeight(view.bounds) - pageHeader.closeHeight)
-                searchBlurView = FXBlurView(frame: blurFrame)
+                searchBlurView = FXBlurView()
                 searchBlurView!.tintColor = UIColor.blackColor()
                 view.insertSubview(searchBlurView!, belowSubview: searchResultView!)
+                searchBlurView?.snp_makeConstraints(closure: { (make) in
+                    make.left.right.bottom.equalTo(view)
+                    make.top.equalTo(pageHeader.searchTextField.snp_bottom)
+                })
             }
             searchBlurView?.alpha = 0.0
             searchResultView?.alpha = 0.0

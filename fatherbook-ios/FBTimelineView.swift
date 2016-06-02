@@ -25,6 +25,8 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
         imagesCollectionView.dataSource = self
         if url != nil {
             avatarImageView.sd_setImageWithURL(url, placeholderImage: UIImage(named: "placeholder"))
+        } else {
+            avatarImageView.image = UIImage(named: "placeholder")
         }
         nicknameLabel.text = nickname
         timelineTextLabel.text = text

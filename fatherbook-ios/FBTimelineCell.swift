@@ -14,12 +14,17 @@ import MZPopView
 class FBTimelineCell: UITableViewCell {
     var timeline: FBTimeline!
     var popButtonGroupToggled = false
+    var indexPath: NSIndexPath = NSIndexPath(forRow: -1, inSection: 0)
 
     // MARK: config
-    func configWithTimeline(timeline: FBTimeline) {
+    func configWithTimeline(timeline: FBTimeline, indexPath: NSIndexPath) {
         self.timeline = timeline
         let avatarURL = NSURL(string: timeline.user?.avatarURL ?? "")
-        mainTimelineView.config(avatarURL: avatarURL, nickname: timeline.user?.nickname, text: timeline.text, imageURLs: timeline.images)
+        if self.indexPath == indexPath {
+            mainTimelineView.config(avatarURL: avatarURL, nickname: timeline.user?.nickname, text: timeline.text, imageURLs: timeline.images)
+        } else {
+            mainTimelineView.config(nickname: timeline.user?.nickname, text: timeline.text, imageURLs: timeline.images)
+        }
         if let repostedTimeline = timeline.repostTimeline {
             if !timeline.isRepost {
                 return
@@ -85,6 +90,7 @@ class FBTimelineCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         popButtonGroup.popBack()
+        popButtonGroupToggled = false
         mainTimelineView.clear()
         repostTimelineView.clear()
         repostTimelineView.snp_remakeConstraints { (make) in
