@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import SDWebImage
 import MZPopView
+import Material
 
 class FBTimelineCell: UITableViewCell {
     var timeline: FBTimeline!
@@ -99,22 +100,32 @@ class FBTimelineCell: UITableViewCell {
         }
     }
 
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesBegan(touches, withEvent: event)
+        popButtonGroup.popBack()
+    }
+
     // MARK: action
     func actionButtonPressed(sender: UIButton) {
         if popButtonGroupToggled {
             popButtonGroup.popBack()
         } else {
+            pop(sender)
             popButtonGroup.popLeftFromPoint(CGPointMake(sender.frame.origin.x - 3.0, sender.center.y))
         }
         popButtonGroupToggled = !popButtonGroupToggled
     }
 
-    func likeButtonPressed(sender: UIButton) {
+    func repostButtonPressed(sender: UIButton) {
+        pop(sender.imageView)
+    }
 
+    func likeButtonPressed(sender: UIButton) {
+        pop(sender.imageView)
     }
 
     func commentButtonPressed(sender: UIButton) {
-
+        pop(sender.imageView)
     }
 
     // MARK: private
@@ -137,21 +148,38 @@ class FBTimelineCell: UITableViewCell {
     }
 
     private func popButtonGroupButtons() -> [UIButton] {
-        let likeButton = UIButton(type: .System)
-        likeButton.addTarget(self, action: #selector(likeButtonPressed), forControlEvents: .TouchUpInside)
-        likeButton.setTitle("like", forState: .Normal)
-        likeButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        likeButton.setImage(UIImage(named: "like"), forState: .Normal)
-        likeButton.tintColor = UIColor.whiteColor()
-        likeButton.titleLabel?.font = UIFont.fb_defaultFontOfSize(12.0)
+        func button(title: String) -> UIButton {
+            let btn = UIButton()
+            btn.setTitle(title, forState: .Normal)
+            btn.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+            btn.titleLabel?.font = UIFont.fb_defaultFontOfSize(12.0)
+            return btn
+        }
 
-        let commentButton = UIButton(type: .System)
+        let repostButton = button("repost")
+        repostButton.addTarget(self, action: #selector(repostButtonPressed), forControlEvents: .TouchUpInside)
+        repostButton.setImage(UIImage(named: "repost"), forState: .Normal)
+
+        let likeButton = button("like")
+        likeButton.addTarget(self, action: #selector(likeButtonPressed), forControlEvents: .TouchUpInside)
+        likeButton.setImage(UIImage(named: "like"), forState: .Normal)
+
+        let commentButton = button("comment")
         commentButton.addTarget(self, action: #selector(commentButtonPressed), forControlEvents: .TouchUpInside)
-        commentButton.setTitle("comment", forState: .Normal)
-        commentButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         commentButton.setImage(UIImage(named: "comment"), forState: .Normal)
-        commentButton.tintColor = UIColor.whiteColor()
-        commentButton.titleLabel?.font = UIFont.fb_defaultFontOfSize(12.0)
-        return [likeButton, commentButton]
+        return [repostButton, likeButton, commentButton]
+    }
+
+    // MARK: - privates
+    private func pop(view: UIView?) {
+        let anim = CAKeyframeAnimation(keyPath: "transform")
+        anim.duration = 0.4
+        anim.values = [
+            NSValue(CATransform3D: CATransform3DMakeScale(2.0, 2.0, 1.0)),
+            NSValue(CATransform3D: CATransform3DMakeScale(1.5, 1.5, 1.0)),
+            NSValue(CATransform3D: CATransform3DMakeScale(1.8, 1.8, 1.0)),
+            NSValue(CATransform3D: CATransform3DIdentity)
+        ]
+        view?.layer.addAnimation(anim, forKey: nil)
     }
 }

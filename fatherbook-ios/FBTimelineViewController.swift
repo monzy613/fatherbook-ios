@@ -38,17 +38,17 @@ class FBTimelineViewController: UITableViewController {
     // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return timelines.count
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return timelines.count
+        return 1
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FBTimelineCell.self), forIndexPath: indexPath) as! FBTimelineCell
-        if let timeline = timelines.fb_safeObjectAtIndex(indexPath.row) {
+        if let timeline = timelines.fb_safeObjectAtIndex(indexPath.section) {
             cell.indexPath = indexPath
             cell.configWithTimeline(timeline, indexPath: indexPath)
         }
@@ -58,16 +58,21 @@ class FBTimelineViewController: UITableViewController {
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return tableView.fd_heightForCellWithIdentifier(NSStringFromClass(FBTimelineCell.self), cacheByIndexPath: indexPath, configuration: {
             (cell) in
-            if let timeline = self.timelines.fb_safeObjectAtIndex(indexPath.row) {
+            if let timeline = self.timelines.fb_safeObjectAtIndex(indexPath.section) {
                 (cell as? FBTimelineCell)?.indexPath = indexPath
                 (cell as? FBTimelineCell)?.configWithTimeline(timeline, indexPath: indexPath)
             }
         })
     }
 
+    override func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 10.0
+    }
+
     // MARK: private
     private func setupTableView() {
         tableView.tableFooterView = UIView()
+        tableView.separatorStyle = .SingleLine
         tableView.registerClass(FBTimelineCell.self, forCellReuseIdentifier: NSStringFromClass(FBTimelineCell.self))
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(loadTimelines), forControlEvents: .ValueChanged)
