@@ -61,6 +61,14 @@ var kFBApiGetTimelineByFollowing: String {
     return "\(kFBBaseURL)/app.timeline.getByFollowing"
 }
 
+var kFBApiTimelineLike: String {
+    return "\(kFBBaseURL)/app.timeline.like"
+}
+
+var kFBApiTimelineUnlike: String {
+    return "\(kFBBaseURL)/app.timeline.unlike"
+}
+
 let kAccount = "account"
 let kSearchString = "searchString"
 let kPassword = "password"
@@ -75,6 +83,7 @@ let kRepostCount = "repostCount"
 let kIsRepost = "isRepost"
 let kRepostTimeline = "repostTimeline"
 let kLiked = "liked"
+let kTimelineID = "timelineID"
 let kComments = "comments"
 
 let kIndex = "index"

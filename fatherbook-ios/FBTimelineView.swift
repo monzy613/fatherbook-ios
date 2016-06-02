@@ -28,7 +28,7 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
         } else {
             avatarImageView.image = UIImage(named: "placeholder")
         }
-        nicknameLabel.text = nickname
+        nicknameLabel.text = isRepost ?"@\(nickname ?? "")": nickname
         timelineTextLabel.text = text
         self.imageURLs = imageURLs
         switch imageURLs.count {
@@ -40,6 +40,7 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
             imageView.sd_setImageWithURL(imageItem?.imageURL, placeholderImage: UIImage(named: "placeholder"))
             let size = imageItem?.imageSize ?? CGSizeZero
             if size.width != 0 && size.height != 0 {
+                //imageView
                 self.imageView.snp_remakeConstraints { (make) in
                     make.top.equalTo(self.timelineTextLabel.snp_bottom).offset(10.0)
                     make.width.equalTo(self).multipliedBy(0.4)

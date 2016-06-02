@@ -12,15 +12,26 @@ import SDWebImage
 import MZPopView
 import Material
 
+private let actionGroupButtonHeightWidthProportion: CGFloat = 7 / 10
+
+protocol FBTimelineCellDelegate: class {
+    func fbTimelineCellDidPressRepostButton(cell: FBTimelineCell)
+    func fbTimelineCellDidPressLikeButton(cell: FBTimelineCell)
+    func fbTimelineCellDidPressCommentButton(cell: FBTimelineCell)
+}
+
 class FBTimelineCell: UITableViewCell {
     var timeline: FBTimeline!
     var popButtonGroupToggled = false
     var indexPath: NSIndexPath = NSIndexPath(forRow: -1, inSection: 0)
+    weak var delegate: FBTimelineCellDelegate?
 
-    // MARK: config
+    // MARK: public
     func configWithTimeline(timeline: FBTimeline, indexPath: NSIndexPath) {
+        setupButtonTargets()
         self.timeline = timeline
         let avatarURL = NSURL(string: timeline.user?.avatarURL ?? "")
+        likeButton.setImage(UIImage(named: timeline.liked.contains(FBUserManager.sharedManager().user) ?"liked": "like"), forState: .Normal)
         if self.indexPath == indexPath {
             mainTimelineView.config(avatarURL: avatarURL, nickname: timeline.user?.nickname, text: timeline.text, imageURLs: timeline.images)
         } else {
@@ -98,6 +109,7 @@ class FBTimelineCell: UITableViewCell {
             make.top.equalTo(mainTimelineView.snp_bottom)
             make.height.equalTo(0)
         }
+        removeButtonTargets()
     }
 
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -118,14 +130,25 @@ class FBTimelineCell: UITableViewCell {
 
     func repostButtonPressed(sender: UIButton) {
         pop(sender.imageView)
+        delegate?.fbTimelineCellDidPressRepostButton(self)
     }
 
     func likeButtonPressed(sender: UIButton) {
         pop(sender.imageView)
+        delegate?.fbTimelineCellDidPressLikeButton(self)
+        let myInfo = FBUserManager.sharedManager().user
+        if timeline.liked.contains(myInfo) {
+            //timeline.liked.removeAtIndex(timeline.liked.indexOf(myInfo)!)
+            sender.setImage(UIImage(named: "liked"), forState: .Normal)
+        } else {
+            //timeline.liked.append(myInfo)
+            sender.setImage(UIImage(named: "like"), forState: .Normal)
+        }
     }
 
     func commentButtonPressed(sender: UIButton) {
         pop(sender.imageView)
+        delegate?.fbTimelineCellDidPressCommentButton(self)
     }
 
     // MARK: private
@@ -142,10 +165,14 @@ class FBTimelineCell: UITableViewCell {
         actionButton.snp_makeConstraints { (make) in
             make.top.equalTo(repostTimelineView.snp_bottom).offset(10.0)
             make.right.bottom.equalTo(contentView).inset(10.0)
-            make.width.equalTo(20.0)
-            make.height.equalTo(14.0)
+            make.width.equalTo(25.0)
+            make.height.equalTo(actionButton.snp_width).multipliedBy(actionGroupButtonHeightWidthProportion)
         }
     }
+
+    private var repostButton: UIButton!
+    private var likeButton: UIButton!
+    private var commentButton: UIButton!
 
     private func popButtonGroupButtons() -> [UIButton] {
         func button(title: String) -> UIButton {
@@ -156,21 +183,31 @@ class FBTimelineCell: UITableViewCell {
             return btn
         }
 
-        let repostButton = button("repost")
-        repostButton.addTarget(self, action: #selector(repostButtonPressed), forControlEvents: .TouchUpInside)
+        repostButton = button("repost")
         repostButton.setImage(UIImage(named: "repost"), forState: .Normal)
 
-        let likeButton = button("like")
-        likeButton.addTarget(self, action: #selector(likeButtonPressed), forControlEvents: .TouchUpInside)
+        likeButton = button("like")
         likeButton.setImage(UIImage(named: "like"), forState: .Normal)
 
-        let commentButton = button("comment")
-        commentButton.addTarget(self, action: #selector(commentButtonPressed), forControlEvents: .TouchUpInside)
+        commentButton = button("comment")
         commentButton.setImage(UIImage(named: "comment"), forState: .Normal)
+
         return [repostButton, likeButton, commentButton]
     }
 
     // MARK: - privates
+    private func setupButtonTargets() {
+        repostButton.addTarget(self, action: #selector(repostButtonPressed), forControlEvents: .TouchUpInside)
+        likeButton.addTarget(self, action: #selector(likeButtonPressed), forControlEvents: .TouchUpInside)
+        commentButton.addTarget(self, action: #selector(commentButtonPressed), forControlEvents: .TouchUpInside)
+    }
+
+    private func removeButtonTargets() {
+        repostButton.removeTarget(self, action: #selector(repostButtonPressed), forControlEvents: .TouchUpInside)
+        likeButton.removeTarget(self, action: #selector(likeButtonPressed), forControlEvents: .TouchUpInside)
+        commentButton.removeTarget(self, action: #selector(commentButtonPressed), forControlEvents: .TouchUpInside)
+    }
+
     private func pop(view: UIView?) {
         let anim = CAKeyframeAnimation(keyPath: "transform")
         anim.duration = 0.4

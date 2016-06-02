@@ -10,7 +10,7 @@ import UIKit
 import SwiftyJSON
 import UITableView_FDTemplateLayoutCell
 
-class FBTimelineViewController: UITableViewController {
+class FBTimelineViewController: UITableViewController, FBTimelineCellDelegate {
     var timelines = [FBTimeline]()
     
     // MARK: - life cycle
@@ -28,6 +28,39 @@ class FBTimelineViewController: UITableViewController {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         NSNotificationCenter.defaultCenter().postNotificationName(kTIMELINEVCWILLDISMISS, object: nil)
+    }
+
+    // MARK: - delegate -
+    // MARK: - FBTImelineCellDelegate
+    func fbTimelineCellDidPressRepostButton(cell: FBTimelineCell) {
+
+    }
+
+    func fbTimelineCellDidPressLikeButton(cell: FBTimelineCell) {
+        if let timeline = timelines.fb_safeObjectAtIndex(cell.indexPath.section), let myInfo = FBUserManager.sharedManager().user {
+            var apiURL = ""
+            if timeline.liked.contains(myInfo) {
+                //unlike
+                apiURL = kFBApiTimelineUnlike
+                timeline.liked.removeAtIndex(timeline.liked.indexOf(myInfo)!)
+            } else {
+                //like
+                apiURL = kFBApiTimelineLike
+                timeline.liked.append(myInfo)
+            }
+            FBApi.post(withURL: apiURL, parameters: [
+                kAccount: myInfo.account ?? "",
+                kTimelineID: timeline.id
+                ], success: { (json) -> (Void) in
+                    print("success: \(json)")
+                }, failure: { (err) -> (Void) in
+                    print("failed")
+            })
+        }
+    }
+
+    func fbTimelineCellDidPressCommentButton(cell: FBTimelineCell) {
+
     }
 
     // MARK: - Table view delegate
@@ -49,6 +82,7 @@ class FBTimelineViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FBTimelineCell.self), forIndexPath: indexPath) as! FBTimelineCell
         if let timeline = timelines.fb_safeObjectAtIndex(indexPath.section) {
+            cell.delegate = self
             cell.indexPath = indexPath
             cell.configWithTimeline(timeline, indexPath: indexPath)
         }
