@@ -16,15 +16,21 @@ private let imageCellHeightAmountEqualToOrLessThan4 = (CGRectGetWidth(UIScreen.m
 class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     private let avatarWidth: CGFloat = 50.0
     private var imageURLs = [FBTimelineImage]()
+    var indexPath: NSIndexPath = NSIndexPath(forRow: -1, inSection: 0)
     var isRepost = false
     var hasImages = false
 
     // MARK: config
-    func config(avatarURL url: NSURL? = nil, nickname: String?, text: String?, imageURLs: [FBTimelineImage]) {
+    func config(avatarURL url: NSURL? = nil, nickname: String?, text: String?, imageURLs: [FBTimelineImage], indexPath: NSIndexPath) {
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
         if url != nil {
-            avatarImageView.sd_setImageWithURL(url, placeholderImage: UIImage(named: "placeholder"))
+            avatarImageView.fb_imageWithURL(url, complete: { (image) in
+                if self.indexPath != indexPath {
+                    return
+                }
+                self.avatarImageView.image = image
+            })
         } else {
             avatarImageView.image = UIImage(named: "placeholder")
         }

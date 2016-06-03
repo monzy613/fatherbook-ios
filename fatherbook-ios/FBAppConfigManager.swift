@@ -16,10 +16,10 @@ class FBAppConfigManager {
 
     var kRongCloudAppKey: String!
     var kRongCloudAppSecret: String!
-    var kQiniuBucketDomain: String!
+    var kQiniuBucketDomain: String! = "http://o7b20it1b.bkt.clouddn.com"
 
     func avatarURL(withName name: String) -> String {
-        return "\(self.kQiniuBucketDomain!)/\(name)?_=\(Int(NSDate().timeIntervalSince1970))"
+        return "\(self.kQiniuBucketDomain!)/\(name)?_=\(Int(NSDate().timeIntervalSince1970) + 200)"
     }
 
     init(withJSON json: JSON) {

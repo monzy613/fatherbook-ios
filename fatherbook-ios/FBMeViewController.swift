@@ -36,12 +36,18 @@ class FBMeViewController: UITableViewController, UIImagePickerControllerDelegate
                 let upManager = QNUploadManager()
                 let data = UIImageJPEGRepresentation(image, 1.0)
                 upManager.putData(data, key: filename, token: token, complete: { (info, key, response) in
-                    if let info = info {
-                        print("info: \(info)")
+                    guard let info = info else {return}
+                    if !info.ok {
+                        return
                     }
-                    if let res = response {
-                        print("res: \(res)")
-                    }
+                    FBApi.post(withURL: kFBApiChangeAvatarSuccess, parameters: [
+                        kAccount: FBUserManager.sharedManager().user.account!
+                        ], success: { (json) -> (Void) in
+                            dispatch_async(dispatch_get_main_queue(), { 
+                                (self.tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0)) as! FBUserTableViewCell).configureContactCellWith(userInfo: FBUserManager.sharedManager().user)
+                            })
+                        }, failure: { (err) -> (Void) in
+                    })
                     }, option: nil)
             }
             }) { (err) -> (Void) in
@@ -70,7 +76,9 @@ class FBMeViewController: UITableViewController, UIImagePickerControllerDelegate
             let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FBUserTableViewCell.self), forIndexPath: indexPath) as! FBUserTableViewCell
             cell.avatarTouchHandler = avatarTouched
             cell.accessoryType = .DisclosureIndicator
-            cell.configureContactCellWith(userInfo: FBUserManager.sharedManager().user)
+            if cell.imageView?.image == nil {
+                cell.configureContactCellWith(userInfo: FBUserManager.sharedManager().user)
+            }
             return cell
         case 1, 2:
             //timeline, setting

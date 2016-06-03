@@ -45,6 +45,9 @@ class FBUserInfo: NSObject {
         get {
             return FBAppConfigManager.sharedManager().avatarURL(withName: _avatarURL ?? "")
         }
+        set {
+            _avatarURL = newValue
+        }
     }
 
     func setFollowInfos(withJSON json: JSON) {

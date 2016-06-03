@@ -57,6 +57,10 @@ var kFBApiChangeAvatar: String {
     return "\(kFBBaseURL)/app.changeavatar"
 }
 
+var kFBApiChangeAvatarSuccess: String {
+    return "\(kFBBaseURL)/app.changeavatar.success"
+}
+
 var kFBApiGetTimelineByFollowing: String {
     return "\(kFBBaseURL)/app.timeline.getByFollowing"
 }

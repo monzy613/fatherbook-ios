@@ -71,7 +71,9 @@ class FBUserTableViewCell: UITableViewCell {
     func configureContactCellWith(userInfo userInfo: FBUserInfo) {
         nicknameLabel.text = userInfo.nickname ?? userInfo.account ?? "nil"
         accountLabel.text = "soa ID: \(userInfo.account ?? "nil")"
-        avatarImageView.sd_setImageWithURL(NSURL(string: userInfo.avatarURL), placeholderImage: UIImage(named: "default-avatar"))
+        avatarImageView.fb_imageWithURL(NSURL(string: userInfo.avatarURL)) { (image) in
+            self.avatarImageView.image = image
+        }
         actionButton.removeFromSuperview()
     }
 

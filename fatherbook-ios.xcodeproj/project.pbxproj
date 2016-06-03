@@ -35,6 +35,8 @@
 		F4AA1FFE1CE4167400A2A4F7 /* FBUserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4AA1FFD1CE4167400A2A4F7 /* FBUserManager.swift */; };
 		F4AA20001CE41E8100A2A4F7 /* FBUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4AA1FFF1CE41E8100A2A4F7 /* FBUserTableViewCell.swift */; };
 		F4AA200A1CE4B7C600A2A4F7 /* FBTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4AA20091CE4B7C600A2A4F7 /* FBTheme.swift */; };
+		F4AD561C1D01B88F00A6AA98 /* FBGlobalMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4AD561B1D01B88F00A6AA98 /* FBGlobalMethods.swift */; };
+		F4AD561E1D01B93D00A6AA98 /* UIImageView+FBOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4AD561D1D01B93D00A6AA98 /* UIImageView+FBOperation.swift */; };
 		F4B654D61CDEE2DA00E3ED5E /* FBApiURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B654D51CDEE2DA00E3ED5E /* FBApiURL.swift */; };
 		F4B654D81CDEE2F300E3ED5E /* FBConsts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B654D71CDEE2F300E3ED5E /* FBConsts.swift */; };
 		F4B654DA1CDEE31400E3ED5E /* FBApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B654D91CDEE31400E3ED5E /* FBApi.swift */; };
@@ -82,6 +84,8 @@
 		F4AA1FFD1CE4167400A2A4F7 /* FBUserManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBUserManager.swift; sourceTree = "<group>"; };
 		F4AA1FFF1CE41E8100A2A4F7 /* FBUserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBUserTableViewCell.swift; sourceTree = "<group>"; };
 		F4AA20091CE4B7C600A2A4F7 /* FBTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBTheme.swift; sourceTree = "<group>"; };
+		F4AD561B1D01B88F00A6AA98 /* FBGlobalMethods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBGlobalMethods.swift; sourceTree = "<group>"; };
+		F4AD561D1D01B93D00A6AA98 /* UIImageView+FBOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+FBOperation.swift"; sourceTree = "<group>"; };
 		F4B654D51CDEE2DA00E3ED5E /* FBApiURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBApiURL.swift; sourceTree = "<group>"; };
 		F4B654D71CDEE2F300E3ED5E /* FBConsts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBConsts.swift; sourceTree = "<group>"; };
 		F4B654D91CDEE31400E3ED5E /* FBApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FBApi.swift; sourceTree = "<group>"; };
@@ -206,6 +210,7 @@
 			isa = PBXGroup;
 			children = (
 				F410B5E71CE05F8C008D9D01 /* FBViewGenerator.swift */,
+				F4AD561D1D01B93D00A6AA98 /* UIImageView+FBOperation.swift */,
 				F4B654D51CDEE2DA00E3ED5E /* FBApiURL.swift */,
 				F4B654D91CDEE31400E3ED5E /* FBApi.swift */,
 				F4AA20091CE4B7C600A2A4F7 /* FBTheme.swift */,
@@ -214,6 +219,7 @@
 				F45F873B1CE9EC6300575F68 /* UIWindow+mainWindow.swift */,
 				F44AB34C1CF2C69D00A1D5E6 /* JSON+AppendOperation.swift */,
 				F4796C891CED639400A7BE78 /* FBPersist.swift */,
+				F4AD561B1D01B88F00A6AA98 /* FBGlobalMethods.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -379,6 +385,7 @@
 				F44AB34D1CF2C69D00A1D5E6 /* JSON+AppendOperation.swift in Sources */,
 				F4B654D61CDEE2DA00E3ED5E /* FBApiURL.swift in Sources */,
 				F4E03B1C1CFC867F001235BB /* FBImageViewCell.swift in Sources */,
+				F4AD561E1D01B93D00A6AA98 /* UIImageView+FBOperation.swift in Sources */,
 				F410B5EC1CE07487008D9D01 /* MBProgressHUD_Extensions.swift in Sources */,
 				F42B2B2C1CE8E51100EEFB64 /* String_Extension.swift in Sources */,
 				F42B2B2A1CE8DB8B00EEFB64 /* FBScrollPageViewController.swift in Sources */,
@@ -389,6 +396,7 @@
 				F410B5E81CE05F8C008D9D01 /* FBViewGenerator.swift in Sources */,
 				F4A10D801CE23D3A00DEC337 /* FBPageHeaderView.swift in Sources */,
 				F45F873C1CE9EC6300575F68 /* UIWindow+mainWindow.swift in Sources */,
+				F4AD561C1D01B88F00A6AA98 /* FBGlobalMethods.swift in Sources */,
 				F4890DC01CF986A60029CEF8 /* FBTimelineCell.swift in Sources */,
 				F478BFEC1CE371F700F8F4DE /* FBMeViewController.swift in Sources */,
 				F4903E1D1CE5F71400DD9AB5 /* FXBlurView_Extension.swift in Sources */,

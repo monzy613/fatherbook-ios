@@ -32,16 +32,14 @@ class FBTimelineCell: UITableViewCell {
         self.timeline = timeline
         let avatarURL = NSURL(string: timeline.user?.avatarURL ?? "")
         likeButton.setImage(UIImage(named: timeline.liked.contains(FBUserManager.sharedManager().user) ?"liked": "like"), forState: .Normal)
-        if self.indexPath == indexPath {
-            mainTimelineView.config(avatarURL: avatarURL, nickname: timeline.user?.nickname, text: timeline.text, imageURLs: timeline.images)
-        } else {
-            mainTimelineView.config(nickname: timeline.user?.nickname, text: timeline.text, imageURLs: timeline.images)
-        }
+        mainTimelineView.indexPath = indexPath
+        repostTimelineView.indexPath = indexPath
+        mainTimelineView.config(avatarURL: avatarURL, nickname: timeline.user?.nickname, text: timeline.text, imageURLs: timeline.images, indexPath: indexPath)
         if let repostedTimeline = timeline.repostTimeline {
             if !timeline.isRepost {
                 return
             }
-            repostTimelineView.config(nickname: repostedTimeline.user?.nickname, text: repostedTimeline.text, imageURLs: repostedTimeline.images)
+            repostTimelineView.config(nickname: repostedTimeline.user?.nickname, text: repostedTimeline.text, imageURLs: repostedTimeline.images, indexPath: indexPath)
             repostTimelineView.snp_remakeConstraints { (make) in
                 make.top.equalTo(mainTimelineView.snp_bottom)
                 make.left.right.equalTo(mainTimelineView)
