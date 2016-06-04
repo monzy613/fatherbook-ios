@@ -47,14 +47,14 @@ extension UIView {
 
 class FBLayout {
     private let cellHeightDictionary: [String: CGFloat] = [
-        NSStringFromClass(FBUserTableViewCell.self): 87.0
+        FBUserTableViewCell.description(): 87.0
         ]
 
     class func heightForCellWithReuseIdentifier(identifier: String) -> CGFloat {
         switch identifier {
-        case NSStringFromClass(FBUserTableViewCell.self):
+        case FBUserTableViewCell.description():
             return CGRectGetWidth(UIScreen.mainScreen().bounds) * 0.232
-        case NSStringFromClass(FBAlbumPreviewTableViewCell.self):
+        case FBAlbumPreviewTableViewCell.description():
             return CGRectGetWidth(UIScreen.mainScreen().bounds) * 0.208
         default:
             return 87.0

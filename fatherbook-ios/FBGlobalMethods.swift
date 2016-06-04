@@ -15,4 +15,9 @@ class FBGlobalMethods {
         let diskImage = SDImageCache.sharedImageCache().imageFromDiskCacheForKey(cacheKey)
         return diskImage
     }
+
+    class func removeLocaleImage(withURL url: NSURL!) {
+        let cacheKey = url.absoluteString.componentsSeparatedByString("?").fb_safeObjectAtIndex(0)
+        SDImageCache.sharedImageCache().removeImageForKey(cacheKey, fromDisk: true)
+    }
 }

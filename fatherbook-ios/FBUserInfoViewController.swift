@@ -45,17 +45,17 @@ class FBUserInfoViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
-            let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FBUserTableViewCell.self), forIndexPath: indexPath) as! FBUserTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(FBUserTableViewCell.description(), forIndexPath: indexPath) as! FBUserTableViewCell
             if let userInfo = userInfo {
                 cell.configureContactCellWith(userInfo: userInfo)
             }
             return cell
         case 1:
-            let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FBAlbumPreviewTableViewCell.self), forIndexPath: indexPath) as! FBAlbumPreviewTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(FBAlbumPreviewTableViewCell.description(), forIndexPath: indexPath) as! FBAlbumPreviewTableViewCell
             return cell
         case 2:
             //chat
-            let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FBButtonTableViewCell.self), forIndexPath: indexPath) as! FBButtonTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(FBButtonTableViewCell.description(), forIndexPath: indexPath) as! FBButtonTableViewCell
             cell.button.backgroundColor = UIColor.fb_darkColor()
             cell.button.setTitle("私信", forState: .Normal)
             cell.configWithHandler({ (cell) in
@@ -64,7 +64,7 @@ class FBUserInfoViewController: UITableViewController {
             return cell
         case 3:
             //unfollow / follow
-            let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FBButtonTableViewCell.self), forIndexPath: indexPath) as! FBButtonTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(FBButtonTableViewCell.description(), forIndexPath: indexPath) as! FBButtonTableViewCell
             if let userInfo = userInfo {
                 switch userInfo.relation {
                 case .Follow:
@@ -112,9 +112,9 @@ class FBUserInfoViewController: UITableViewController {
         tableView.tableHeaderView = UIView(frame: CGRectMake(0, 0, 0, 15))
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = UIColor.fb_lightGrayColor()
-        tableView.registerClass(FBUserTableViewCell.self, forCellReuseIdentifier: NSStringFromClass(FBUserTableViewCell.self))
-        tableView.registerClass(FBAlbumPreviewTableViewCell.self, forCellReuseIdentifier: NSStringFromClass(FBAlbumPreviewTableViewCell.self))
-        tableView.registerClass(FBButtonTableViewCell.self, forCellReuseIdentifier: NSStringFromClass(FBButtonTableViewCell.self))
+        tableView.registerClass(FBUserTableViewCell.self, forCellReuseIdentifier: FBUserTableViewCell.description())
+        tableView.registerClass(FBAlbumPreviewTableViewCell.self, forCellReuseIdentifier: FBAlbumPreviewTableViewCell.description())
+        tableView.registerClass(FBButtonTableViewCell.self, forCellReuseIdentifier: FBButtonTableViewCell.description())
     }
 
     // MARK: - handlers

@@ -16,7 +16,7 @@ class FBAppConfigManager {
 
     var kRongCloudAppKey: String!
     var kRongCloudAppSecret: String!
-    var kQiniuBucketDomain: String! = "http://o7b20it1b.bkt.clouddn.com"
+    var kQiniuBucketDomain: String!
 
     func avatarURL(withName name: String) -> String {
         return "\(self.kQiniuBucketDomain!)/\(name)?_=\(Int(NSDate().timeIntervalSince1970) + 200)"
@@ -41,6 +41,7 @@ class FBAppConfigManager {
     class func sharedManager() -> FBAppConfigManager {
         if _sharedManager == nil {
             _sharedManager = FBAppConfigManager()
+            _sharedManager?.kQiniuBucketDomain = "http://o7b20it1b.bkt.clouddn.com"
         }
         return _sharedManager!
     }

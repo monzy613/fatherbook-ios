@@ -116,6 +116,10 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
         return CGSizeMake(cellHeight, cellHeight)
     }
 
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        return UIEdgeInsetsMake(10, 10, 10, 10)
+    }
+
     // MARK: - dataSource -
     // MARK: UICollectionViewDataSource
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
@@ -127,13 +131,9 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
     }
 
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = imagesCollectionView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(FBImageViewCell.self), forIndexPath: indexPath) as! FBImageViewCell
+        let cell = imagesCollectionView.dequeueReusableCellWithReuseIdentifier(FBImageViewCell.description(), forIndexPath: indexPath) as! FBImageViewCell
         cell.imageView.sd_setImageWithURL(imageURLs.fb_safeObjectAtIndex(indexPath.row)?.imageURL, placeholderImage: UIImage(named: "placeholder"))
         return cell
-    }
-
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(10, 10, 10, 10)
     }
 
     // MARK: private
@@ -213,7 +213,7 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
     //optional: imagesCollectionView or imageView or none
     lazy var imagesCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
-        collectionView.registerClass(FBImageViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(FBImageViewCell.self))
+        collectionView.registerClass(FBImageViewCell.self, forCellWithReuseIdentifier: FBImageViewCell.description())
         collectionView.scrollEnabled = false
         collectionView.backgroundColor = UIColor.clearColor()
         return collectionView

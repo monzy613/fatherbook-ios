@@ -8,8 +8,17 @@
 
 import UIKit
 import Qiniu
+import BUKImagePickerController
+import BUKPhotoEditViewController
+import SDWebImage
 
-class FBMeViewController: UITableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class FBMeViewController: UITableViewController, BUKImagePickerControllerDelegate, BUKPhotoEditViewControllerDelegate {
+    lazy var imagePickerNavigationController: UINavigationController! = {
+        let navigationController = UINavigationController()
+        navigationController.navigationBarHidden = true
+        return navigationController
+    }()
+    var imagePicker: BUKImagePickerController!
 
     // MARK: - life cycle
     override func viewDidLoad() {
@@ -21,38 +30,67 @@ class FBMeViewController: UITableViewController, UIImagePickerControllerDelegate
     // MARK: - delegate
     // MARK: FBUserTableViewCell delegate
     func avatarTouched(cell: FBUserTableViewCell) {
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        presentViewController(imagePicker, animated: true, completion: nil)
+        imagePicker = BUKImagePickerController()
+        imagePicker?.allowsMultipleSelection = false
+        imagePicker?.delegate = self
+        imagePickerNavigationController.pushViewController(imagePicker, animated: false)
+        presentViewController(imagePickerNavigationController, animated: true, completion: nil)
     }
 
 
     // MARK: - delegate -
-    // MARK: - UIImagePickerControllerDelegate
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
-        picker.dismissViewControllerAnimated(true, completion: nil)
-        FBApi.post(withURL: kFBApiChangeAvatar, parameters: [kAccount: FBUserManager.sharedManager().user.account!], success: { (json) -> (Void) in
-            if let token = json[kToken].string, let filename = json[kFilename].string {
-                let upManager = QNUploadManager()
-                let data = UIImageJPEGRepresentation(image, 1.0)
-                upManager.putData(data, key: filename, token: token, complete: { (info, key, response) in
-                    guard let info = info else {return}
-                    if !info.ok {
-                        return
-                    }
-                    FBApi.post(withURL: kFBApiChangeAvatarSuccess, parameters: [
-                        kAccount: FBUserManager.sharedManager().user.account!
-                        ], success: { (json) -> (Void) in
-                            dispatch_async(dispatch_get_main_queue(), { 
-                                (self.tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0)) as! FBUserTableViewCell).configureContactCellWith(userInfo: FBUserManager.sharedManager().user)
-                            })
-                        }, failure: { (err) -> (Void) in
-                    })
-                    }, option: nil)
-            }
-            }) { (err) -> (Void) in
-                print("err in \(kFBApiChangeAvatar): \(err)")
+    // MARK: - BUKImagePickerControllerDelegate
+    func buk_imagePickerController(imagePickerController: BUKImagePickerController!, didFinishPickingAssets assets: [AnyObject]!) {
+        print("didFinishPickingAssets")
+        if assets.count == 0 {
+            return
         }
+        let asset = (assets[0] as! ALAsset)
+        let image = UIImage(CGImage: asset.defaultRepresentation().fullScreenImage().takeUnretainedValue())
+        let photoEditViewController = BUKPhotoEditViewController(photo: image)
+        photoEditViewController.delegate = self
+        imagePickerNavigationController.pushViewController(photoEditViewController, animated: true)
+    }
+
+    func buk_imagePickerControllerDidCancel(imagePickerController: BUKImagePickerController!) {
+        imagePickerNavigationController.dismissViewControllerAnimated(true, completion: nil)
+    }
+
+
+    // MARK: BUKPhotoEditViewControllerDelegate
+    func buk_photoEditViewController(controller: BUKPhotoEditViewController!, didFinishEditingPhoto photo: UIImage!) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            let data = UIImageJPEGRepresentation(photo, 1.0)
+            dispatch_async(dispatch_get_main_queue()) {
+                FBApi.post(withURL: kFBApiChangeAvatar, parameters: [kAccount: FBUserManager.sharedManager().user.account!], success: { (json) -> (Void) in
+                    if let token = json[kToken].string, let filename = json[kFilename].string {
+                        let upManager = QNUploadManager()
+                        upManager.putData(data, key: filename, token: token, complete: { (info, key, response) in
+                            guard let info = info else {return}
+                            if !info.ok {
+                                return
+                            }
+                            FBApi.post(withURL: kFBApiChangeAvatarSuccess, parameters: [
+                                kAccount: FBUserManager.sharedManager().user.account!
+                                ], success: { (json) -> (Void) in
+                                    dispatch_async(dispatch_get_main_queue(), {
+                                        FBGlobalMethods.removeLocaleImage(withURL: NSURL(string: FBUserManager.sharedManager().user.avatarURL))
+                                        (self.tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0)) as! FBUserTableViewCell).configureContactCellWith(userInfo: FBUserManager.sharedManager().user)
+                                    })
+                                }, failure: { (err) -> (Void) in
+                            })
+                            }, option: nil)
+                    }
+                }) { (err) -> (Void) in
+                    print("err in \(kFBApiChangeAvatar): \(err)")
+                }
+            }
+        }
+        imagePickerNavigationController.dismissViewControllerAnimated(true, completion: nil)
+    }
+
+    func buk_photoEditViewControllerDidCancelEditingPhoto(controller: BUKPhotoEditViewController!) {
+        imagePickerNavigationController.dismissViewControllerAnimated(true, completion: nil)
     }
 
     // MARK: - TableViewdelegate
@@ -73,7 +111,7 @@ class FBMeViewController: UITableViewController, UIImagePickerControllerDelegate
         switch indexPath.section {
         case 0:
             //userinfo
-            let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FBUserTableViewCell.self), forIndexPath: indexPath) as! FBUserTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(FBUserTableViewCell.description(), forIndexPath: indexPath) as! FBUserTableViewCell
             cell.avatarTouchHandler = avatarTouched
             cell.accessoryType = .DisclosureIndicator
             if cell.imageView?.image == nil {
@@ -82,7 +120,7 @@ class FBMeViewController: UITableViewController, UIImagePickerControllerDelegate
             return cell
         case 1, 2:
             //timeline, setting
-            let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FBLeftIconTitleTableViewCell.self), forIndexPath: indexPath) as! FBLeftIconTitleTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(FBLeftIconTitleTableViewCell.description(), forIndexPath: indexPath) as! FBLeftIconTitleTableViewCell
             cell.accessoryType = .DisclosureIndicator
             if indexPath.section == 1 {
                 cell.config(withImage: UIImage(named: "dark-matters-normal"), title: "My Timeline")
@@ -119,7 +157,7 @@ class FBMeViewController: UITableViewController, UIImagePickerControllerDelegate
         tableView.tableHeaderView = UIView(frame: CGRectMake(0, 0, 0, 15))
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = UIColor.fb_darkColor()
-        tableView.registerClass(FBUserTableViewCell.self, forCellReuseIdentifier: NSStringFromClass(FBUserTableViewCell.self))
-        tableView.registerClass(FBLeftIconTitleTableViewCell.self, forCellReuseIdentifier: NSStringFromClass(FBLeftIconTitleTableViewCell.self))
+        tableView.registerClass(FBUserTableViewCell.self, forCellReuseIdentifier: FBUserTableViewCell.description())
+        tableView.registerClass(FBLeftIconTitleTableViewCell.self, forCellReuseIdentifier: FBLeftIconTitleTableViewCell.description())
     }
 }

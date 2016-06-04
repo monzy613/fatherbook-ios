@@ -17,7 +17,7 @@ class FBContactViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableFooterView = UIView()
-        tableView.registerClass(FBUserTableViewCell.self, forCellReuseIdentifier: NSStringFromClass(FBUserTableViewCell.self))
+        tableView.registerClass(FBUserTableViewCell.self, forCellReuseIdentifier: FBUserTableViewCell.description())
     }
 
     override func viewWillAppear(animated: Bool) {

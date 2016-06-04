@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 import MBProgressHUD
 import MZGoogleStyleButton
+import BUKImagePickerController
+import BUKPhotoEditViewController
 import FXBlurView
 import SIAlertView
 import Material
@@ -430,6 +432,11 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
             textTimelineEditor.show()
         case 1:
             //imageButton
+            let imageTimelineController = FBNewTimelineViewController()
+            let navigationController = UINavigationController(rootViewController: imageTimelineController)
+            navigationController.navigationBar.barTintColor = UIColor.fb_darkColor()
+            navigationController.navigationBar.tintColor = UIColor.whiteColor()
+            presentViewController(navigationController, animated: true, completion: nil)
             break
         default:
             break
@@ -503,7 +510,7 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
                 searchResultView?.backgroundColor = UIColor.clearColor()
                 searchResultView?.delegate = self
                 searchResultView?.dataSource = self
-                searchResultView?.registerClass(FBUserTableViewCell.self, forCellReuseIdentifier: NSStringFromClass(FBUserTableViewCell.self))
+                searchResultView?.registerClass(FBUserTableViewCell.self, forCellReuseIdentifier: FBUserTableViewCell.description())
                 searchResultView?.tableFooterView = UIView()
                 searchResultView?.separatorStyle = .SingleLine
                 view.addSubview(searchResultView!)

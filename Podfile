@@ -15,7 +15,7 @@ target 'fatherbook-ios' do
 	pod 'MZGoogleStyleButton', :git => "https://github.com/monzy613/MZGoogleStyleButton.git"
 	pod 'SIAlertView', :git => "https://github.com/monzy613/SIAlertView.git", :branch => 'buttonBackgroundCornerRadiusInitializer'
 	pod 'BUKImagePickerController'
-	pod 'BUKPhotoEditViewController'
+	pod 'BUKPhotoEditViewController', :git => "https://github.com/iException/BUKPhotoEditViewController.git"
 	pod 'SDWebImage'
 	pod 'Material', '~> 1.0'
 	pod 'UITableView+FDTemplateLayoutCell'

@@ -80,7 +80,7 @@ class FBTimelineViewController: UITableViewController, FBTimelineCellDelegate {
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FBTimelineCell.self), forIndexPath: indexPath) as! FBTimelineCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(FBTimelineCell.description(), forIndexPath: indexPath) as! FBTimelineCell
         if let timeline = timelines.fb_safeObjectAtIndex(indexPath.section) {
             cell.delegate = self
             cell.indexPath = indexPath
@@ -90,7 +90,7 @@ class FBTimelineViewController: UITableViewController, FBTimelineCellDelegate {
     }
 
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return tableView.fd_heightForCellWithIdentifier(NSStringFromClass(FBTimelineCell.self), cacheByIndexPath: indexPath, configuration: {
+        return tableView.fd_heightForCellWithIdentifier(FBTimelineCell.description(), cacheByIndexPath: indexPath, configuration: {
             (cell) in
             if let timeline = self.timelines.fb_safeObjectAtIndex(indexPath.section) {
                 (cell as? FBTimelineCell)?.indexPath = indexPath
@@ -107,7 +107,7 @@ class FBTimelineViewController: UITableViewController, FBTimelineCellDelegate {
     private func setupTableView() {
         tableView.tableFooterView = UIView()
         tableView.separatorStyle = .SingleLine
-        tableView.registerClass(FBTimelineCell.self, forCellReuseIdentifier: NSStringFromClass(FBTimelineCell.self))
+        tableView.registerClass(FBTimelineCell.self, forCellReuseIdentifier: FBTimelineCell.description())
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(loadTimelines), forControlEvents: .ValueChanged)
     }

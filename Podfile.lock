@@ -53,7 +53,7 @@ PODS:
 DEPENDENCIES:
   - Alamofire
   - BUKImagePickerController
-  - BUKPhotoEditViewController
+  - BUKPhotoEditViewController (from `https://github.com/iException/BUKPhotoEditViewController.git`)
   - FXBlurView
   - Material (~> 1.0)
   - MBProgressHUD
@@ -73,6 +73,8 @@ DEPENDENCIES:
   - UITableView+FDTemplateLayoutCell
 
 EXTERNAL SOURCES:
+  BUKPhotoEditViewController:
+    :git: https://github.com/iException/BUKPhotoEditViewController.git
   MZGoogleStyleButton:
     :git: https://github.com/monzy613/MZGoogleStyleButton.git
   SIAlertView:
@@ -80,6 +82,9 @@ EXTERNAL SOURCES:
     :git: https://github.com/monzy613/SIAlertView.git
 
 CHECKOUT OPTIONS:
+  BUKPhotoEditViewController:
+    :commit: 586f4c215378a95240b629beb2e46965bf601e87
+    :git: https://github.com/iException/BUKPhotoEditViewController.git
   MZGoogleStyleButton:
     :commit: db5b996cd4b5a4fb33290acb5fba29bf701eb1ad
     :git: https://github.com/monzy613/MZGoogleStyleButton.git
@@ -112,6 +117,6 @@ SPEC CHECKSUMS:
   UIColor_Hex_Swift: e91dc51f6bf252ec7bf74c8704ceedeeb7640c1c
   UITableView+FDTemplateLayoutCell: 234e1582bcc4e18461af91155123bb96538ed030
 
-PODFILE CHECKSUM: a5707e4f4b2b6046f039df009560431361209ae4
+PODFILE CHECKSUM: cd2d1afef8e40a8ae0a408166154d4030860d6c6
 
 COCOAPODS: 1.0.0
