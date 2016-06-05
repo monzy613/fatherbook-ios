@@ -43,7 +43,7 @@ class FBUserInfo: NSObject {
     var _avatarURL: String?
     var avatarURL: String {
         get {
-            return FBAppConfigManager.sharedManager().avatarURL(withName: _avatarURL ?? "")
+            return FBAppConfigManager.sharedManager().url(withShortURL: _avatarURL ?? "")
         }
         set {
             _avatarURL = newValue

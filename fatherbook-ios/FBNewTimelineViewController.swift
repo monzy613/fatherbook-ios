@@ -6,6 +6,8 @@
 //  Copyright © 2016 MonzyZhang. All rights reserved.
 //
 
+import Qiniu
+import MBProgressHUD
 import BUKImagePickerController
 
 private let maxImageCount = 9
@@ -158,11 +160,53 @@ class FBNewTimelineViewController: UITableViewController,
 
     // MARK: - action
     func sendButtonPressed(sender: UIBarButtonItem) {
-        navigationController?.dismissViewControllerAnimated(true, completion: nil)
+        if let text = (tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 1)) as? FBTextViewTableViewCell)?.textView.text {
+            if text == "" && selectedImages.count == 0 {
+                MBProgressHUD.showErrorToView("opps, empty timeline", rootView: self.navigationController?.view)
+                return
+            }
+            FBApi.post(withURL: kFBApiPostTimeline,
+                       parameters: [
+                        kAccount: FBUserManager.sharedManager().user.account ?? "",
+                        kPassword: FBUserManager.sharedManager().user.password ?? "",
+                        kImages: FBGlobalMethods.getImagesJSONArrayString(selectedImages),
+                        kText: text
+                ],
+                       success: { (json) -> (Void) in
+                        print(json)
+                        guard let tokenJSONs = json[kTokens].array, let timelineID = json[kID].int else { return }
+                        print(tokenJSONs)
+                        FBQNManager.sharedManager().timelineImageQueue[timelineID] = (self.selectedImageCount, 0)
+                        for (index, tokenJSON) in tokenJSONs.enumerate() {
+                            let data = UIImageJPEGRepresentation(self.selectedImages[index], 1.0)
+                            if let token = tokenJSON[kToken].string, let filename = tokenJSON[kFilename].string {
+                                let upManager = QNUploadManager()
+                                upManager.putData(data, key: filename, token: token, complete: { (info, key, res) in
+                                    guard let info = info else {return}
+                                    if !info.ok {
+                                        return
+                                    }
+                                    if var queuePair = FBQNManager.sharedManager().timelineImageQueue[timelineID] {
+                                        queuePair.1 += 1
+                                        if queuePair.0 == queuePair.1 {
+                                            FBQNManager.sharedManager().timelineImageQueue.removeValueForKey(timelineID)
+                                            return
+                                        }
+                                        FBQNManager.sharedManager().timelineImageQueue[timelineID] = queuePair
+                                    }
+                                    }, option: nil)
+                            }
+                        }
+                        self.finishEditing()
+            }) { (error) -> (Void) in
+                MBProgressHUD.showErrorToView("Error", rootView: self.navigationController?.view)
+                self.finishEditing()
+            }
+        }
     }
 
     func cancelButtonPressed(sender: UIBarButtonItem) {
-        navigationController?.dismissViewControllerAnimated(true, completion: nil)
+        finishEditing()
     }
 
     // MARK: - private
@@ -195,5 +239,10 @@ class FBNewTimelineViewController: UITableViewController,
         tableView.reloadData()
         let cell = tableView.dequeueReusableCellWithIdentifier(FBCollectionViewTableViewCell.description(), forIndexPath: NSIndexPath(forRow: 0, inSection: 0)) as? FBCollectionViewTableViewCell
         cell?.collectionView.reloadData()
+    }
+
+    private func finishEditing() {
+        (tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 1)) as? FBTextViewTableViewCell)?.textView.endEditing(true)
+        navigationController?.dismissViewControllerAnimated(true, completion: nil)
     }
 }

@@ -43,7 +43,12 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
         case 1:
             //imageView
             let imageItem = imageURLs.fb_safeObjectAtIndex(0)
-            imageView.sd_setImageWithURL(imageItem?.imageURL, placeholderImage: UIImage(named: "placeholder"))
+            imageView.fb_imageWithURL(imageItem?.imageURL, complete: { (image) in
+                if self.indexPath != indexPath {
+                    return
+                }
+                self.imageView.image = image
+            })
             let size = imageItem?.imageSize ?? CGSizeZero
             if size.width != 0 && size.height != 0 {
                 //imageView
@@ -132,7 +137,9 @@ class FBTimelineView: UIView, UICollectionViewDataSource, UICollectionViewDelega
 
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = imagesCollectionView.dequeueReusableCellWithReuseIdentifier(FBImageViewCell.description(), forIndexPath: indexPath) as! FBImageViewCell
-        cell.imageView.sd_setImageWithURL(imageURLs.fb_safeObjectAtIndex(indexPath.row)?.imageURL, placeholderImage: UIImage(named: "placeholder"))
+        cell.imageView.fb_imageWithURL(imageURLs.fb_safeObjectAtIndex(indexPath.row)?.imageURL, complete: { (image) in
+            cell.imageView.image = image
+        })
         return cell
     }
 

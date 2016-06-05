@@ -6,8 +6,6 @@
 //  Copyright © 2016 MonzyZhang. All rights reserved.
 //
 
-
-
 class FBRCChatManager {
 
     var rcToken: String?

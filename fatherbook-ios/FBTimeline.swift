@@ -15,7 +15,7 @@ class FBTimelineImage {
 
     init(json: JSON) {
         index = Int(json[kIndex].string ?? "0") ?? 0
-        imageURL = NSURL(string: json[kURL].stringValue)
+        imageURL = NSURL(string: FBAppConfigManager.sharedManager().url(withShortURL: json[kURL].stringValue ?? ""))
         let width = CGFloat(json[kWidth].double ?? 0.0)
         let height = CGFloat(json[kHeight].double ?? 0.0)
         self.imageSize = CGSizeMake(width, height)

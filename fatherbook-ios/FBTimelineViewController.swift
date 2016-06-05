@@ -12,6 +12,8 @@ import SVPullToRefresh
 import UITableView_FDTemplateLayoutCell
 
 class FBTimelineViewController: UITableViewController, FBTimelineCellDelegate {
+    var rootViewController: FBRootViewController?
+
     var timelines = [FBTimeline]()
     var firstTimelineID: Int = -1
     var lastTimelineID: Int = -1
@@ -69,6 +71,15 @@ class FBTimelineViewController: UITableViewController, FBTimelineCellDelegate {
     // MARK: - Table view delegate
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    }
+
+    // MARK: Scroll view delegate
+    override func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if velocity.y < 0 {
+            rootViewController?.openHeader()
+        } else if velocity.y > 0 {
+            rootViewController?.closeHeader()
+        }
     }
 
     // MARK: - Table view data source

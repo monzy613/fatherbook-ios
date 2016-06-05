@@ -43,6 +43,7 @@ class FBRootViewController: UIViewController, UIPageViewControllerDelegate, UIPa
     var isDraggingRight = false
     private lazy var timeLineViewController: FBTimelineViewController = {
         let _timeLineViewController = FBTimelineViewController()
+        _timeLineViewController.rootViewController = self
         _timeLineViewController.view.tag = 0
         return _timeLineViewController
     }()
