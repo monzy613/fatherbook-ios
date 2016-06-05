@@ -8,16 +8,19 @@
 
 import UIKit
 import SwiftyJSON
+import SVPullToRefresh
 import UITableView_FDTemplateLayoutCell
 
 class FBTimelineViewController: UITableViewController, FBTimelineCellDelegate {
     var timelines = [FBTimeline]()
+    var firstTimelineID: Int = -1
+    var lastTimelineID: Int = -1
     
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
-        loadTimelines()
+        loadMore()
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -103,40 +106,93 @@ class FBTimelineViewController: UITableViewController, FBTimelineCellDelegate {
         return 10.0
     }
 
+    override func tableView(tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let view = UIView()
+        view.backgroundColor = UIColor.clearColor()
+        return view
+    }
+
     // MARK: private
     private func setupTableView() {
         tableView.tableFooterView = UIView()
         tableView.separatorStyle = .SingleLine
+        tableView.backgroundColor = UIColor.fb_lightGrayColor()
+        tableView.addInfiniteScrollingWithActionHandler { 
+            [unowned self] in
+            self.loadMore()
+        }
+        tableView.addPullToRefreshWithActionHandler {
+            [unowned self] in
+            self.loadNew()
+        }
+        tableView.pullToRefreshView
         tableView.registerClass(FBTimelineCell.self, forCellReuseIdentifier: FBTimelineCell.description())
-        refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(self, action: #selector(loadTimelines), forControlEvents: .ValueChanged)
     }
 
     // MARK: load
-    @objc private func loadTimelines() {
+    private func loadNew() {
         guard let account = FBUserManager.sharedManager().user.account else {
             return
         }
         FBApi.get(withURL: kFBApiGetTimelineByFollowing, parameters: [
             kAccount: account,
-            kCount: 10
+            kMinID: firstTimelineID
+            ], success: { (json) -> (Void) in
+                self.stopLoading()
+                if let timelineJSONs = json[kTimelines].array {
+                    if timelineJSONs.count == 0 {
+                        return
+                    }
+                    for timelineJSON in timelineJSONs.reverse() {
+                        self.timelines.insert(FBTimeline(json: timelineJSON), atIndex: 0)
+                    }
+                    let newSections = NSIndexSet(indexesInRange: NSMakeRange(0, timelineJSONs.count))
+                    self.firstTimelineID = self.timelines.first?.id ?? -1
+                    self.lastTimelineID = self.timelines.last?.id ?? -1
+                    self.tableView.insertSections(newSections, withRowAnimation: UITableViewRowAnimation.Top)
+                    
+                }
+            }) { (err) -> (Void) in
+                self.stopLoading()
+        }
+    }
+
+    private func loadMore() {
+        guard let account = FBUserManager.sharedManager().user.account else {
+            return
+        }
+        FBApi.get(withURL: kFBApiGetTimelineByFollowing, parameters: [
+            kAccount: account,
+            kCount: 5,
+            kMaxID: lastTimelineID
             ], success: {
             (json) -> (Void) in
-            self.refreshControl?.endRefreshing()
+            self.stopLoading()
             if let timelineJSONs = json[kTimelines].array {
-                self.timelines.removeAll()
+                if timelineJSONs.count == 0 {
+                    self.tableView.showsInfiniteScrolling = false
+                    return
+                }
+                let beforeAmount = self.timelines.count
                 for timelineJSON in timelineJSONs {
                     self.timelines.append(FBTimeline(json: timelineJSON))
                 }
-                self.timelines.sortInPlace({ (timeline1, timeline2) -> Bool in
-                    return timeline1.id > timeline2.id
-                })
-                self.tableView.reloadData()
+                let afterAmount = self.timelines.count
+                let newSections = NSIndexSet(indexesInRange: NSMakeRange(beforeAmount, afterAmount - beforeAmount))
+                self.firstTimelineID = self.timelines.first?.id ?? -1
+                self.lastTimelineID = self.timelines.last?.id ?? -1
+                self.tableView.insertSections(newSections, withRowAnimation: UITableViewRowAnimation.Bottom)
+
             }
             }) {
                 (err) -> (Void) in
-                self.refreshControl?.endRefreshing()
+                self.stopLoading()
                 print(err)
         }
+    }
+
+    private func stopLoading() {
+        tableView.pullToRefreshView.stopAnimating()
+        tableView.infiniteScrollingView.stopAnimating()
     }
 }

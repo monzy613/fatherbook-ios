@@ -101,4 +101,5 @@ let kFilename = "filename"
 let kConfig = "config"
 
 let kMaxID = "maxID"
+let kMinID = "minID"
 let kCount = "count"

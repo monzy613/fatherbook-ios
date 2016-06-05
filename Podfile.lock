@@ -45,6 +45,7 @@ PODS:
   - SDWebImage/Core (3.7.6)
   - SIAlertView (1.3.1)
   - SnapKit (0.20.0)
+  - SVPullToRefresh (0.4.1)
   - SwiftyJSON (2.3.2)
   - SWXMLHash (2.3.1)
   - UIColor_Hex_Swift (2.1)
@@ -67,6 +68,7 @@ DEPENDENCIES:
   - SDWebImage
   - SIAlertView (from `https://github.com/monzy613/SIAlertView.git`, branch `buttonBackgroundCornerRadiusInitializer`)
   - SnapKit
+  - SVPullToRefresh
   - SwiftyJSON
   - SWXMLHash
   - UIColor_Hex_Swift
@@ -112,11 +114,12 @@ SPEC CHECKSUMS:
   SDWebImage: c325cf02c30337336b95beff20a13df489ec0ec9
   SIAlertView: e1862c2e1006fb2eefb78028107e56fa0e8c5629
   SnapKit: 5fce3c1bbbf1fbd31de9aa92f33eb9fa03f15650
+  SVPullToRefresh: ba2e718695a43253d8bea6852d2960097dc15d8c
   SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
   SWXMLHash: 795c66e74f4cc9473ad6465c6653c5a6f59f417e
   UIColor_Hex_Swift: e91dc51f6bf252ec7bf74c8704ceedeeb7640c1c
   UITableView+FDTemplateLayoutCell: 234e1582bcc4e18461af91155123bb96538ed030
 
-PODFILE CHECKSUM: cd2d1afef8e40a8ae0a408166154d4030860d6c6
+PODFILE CHECKSUM: 9a08802a9edf7626bf99069323c85898b6503267
 
 COCOAPODS: 1.0.0

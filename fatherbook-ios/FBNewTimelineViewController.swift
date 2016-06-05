@@ -16,7 +16,6 @@ class FBNewTimelineViewController: UITableViewController,
     UICollectionViewDelegate,
     UICollectionViewDataSource,
     UICollectionViewDelegateFlowLayout,
-    UITextViewDelegate,
     BUKImagePickerControllerDelegate {
 
     lazy var imagePicker: BUKImagePickerController = {
@@ -125,7 +124,6 @@ class FBNewTimelineViewController: UITableViewController,
             return cell
         default:
             let cell = tableView.dequeueReusableCellWithIdentifier(FBTextViewTableViewCell.description(), forIndexPath: indexPath) as! FBTextViewTableViewCell
-            cell.textView.delegate = self
             return cell
         }
     }

@@ -19,6 +19,7 @@ target 'fatherbook-ios' do
 	pod 'SDWebImage'
 	pod 'Material', '~> 1.0'
 	pod 'UITableView+FDTemplateLayoutCell'
+	pod 'SVPullToRefresh'
 
 	#RongCloud
 	pod 'RongCloudIMKit'
