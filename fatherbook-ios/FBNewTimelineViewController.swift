@@ -7,6 +7,7 @@
 //
 
 import Qiniu
+import SIAlertView
 import MBProgressHUD
 import BUKImagePickerController
 
@@ -18,7 +19,8 @@ class FBNewTimelineViewController: UITableViewController,
     UICollectionViewDelegate,
     UICollectionViewDataSource,
     UICollectionViewDelegateFlowLayout,
-    BUKImagePickerControllerDelegate {
+    BUKImagePickerControllerDelegate,
+    FBImageViewCellDelegate {
 
     lazy var imagePicker: BUKImagePickerController = {
         let imagePicker = BUKImagePickerController()
@@ -51,7 +53,15 @@ class FBNewTimelineViewController: UITableViewController,
     }
 
     // MARK: - delegate
-    // MARK: - BUKImagePickerControllerDelegate
+    // MARK: - FBImageViewCellDelegate -
+    func imageViewCellDidPressDeleteButton(cell: FBImageViewCell) {
+        if let indexPath = getCollectionView()?.indexPathForCell(cell) {
+            selectedImages.removeAtIndex(indexPath.row)
+            selectedImageCount -= 1
+        }
+    }
+
+    // MARK: - BUKImagePickerControllerDelegate -
     func buk_imagePickerController(imagePickerController: BUKImagePickerController!, didFinishPickingAssets assets: [AnyObject]!) {
         guard let assets = assets else {
             imagePicker.dismissViewControllerAnimated(true, completion: nil)
@@ -77,9 +87,16 @@ class FBNewTimelineViewController: UITableViewController,
 
     // MARK: - collectionview delegate -
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        if selectedImageCount < 9 {
+        if checkIsAddNewCell(indexPath) {
             navigationController?.setNavigationBarHidden(true, animated: true)
             navigationController?.pushViewController(imagePicker, animated: true)
+        }
+    }
+
+    // MARK: - scrollView dekegate -
+    override func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if velocity.y < 0 {
+            getTextView()?.endEditing(true)
         }
     }
 
@@ -142,8 +159,11 @@ class FBNewTimelineViewController: UITableViewController,
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(FBImageViewCell.description(), forIndexPath: indexPath) as! FBImageViewCell
         if checkIsAddNewCell(indexPath) {
+            cell.longPressEnabled = false
             cell.imageView.image = UIImage(named: "newImagePlaceholder")
         } else {
+            cell.longPressEnabled = true
+            cell.delegate = self
             cell.imageView.image = selectedImages.fb_safeObjectAtIndex(indexPath.row)
         }
         return cell
@@ -160,7 +180,7 @@ class FBNewTimelineViewController: UITableViewController,
 
     // MARK: - action
     func sendButtonPressed(sender: UIBarButtonItem) {
-        if let text = (tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 1)) as? FBTextViewTableViewCell)?.textView.text {
+        if let text = getTextView()?.text {
             if text == "" && selectedImages.count == 0 {
                 MBProgressHUD.showErrorToView("opps, empty timeline", rootView: self.navigationController?.view)
                 return
@@ -206,10 +226,38 @@ class FBNewTimelineViewController: UITableViewController,
     }
 
     func cancelButtonPressed(sender: UIBarButtonItem) {
+        getTextView()?.endEditing(true)
+        if checkDirty() {
+            //SIAlertView
+            let alert = SIAlertView(title: "Timeline", andMessage: "确认放弃正在编辑的Timeline?")
+            alert.destructiveButtonColor = UIColor.fb_lightColor()
+            alert.cancelButtonColor = UIColor.fb_darkColor()
+            alert.buttonsListStyle = .Rows
+            alert.addButtonWithTitle("是", type: .Destructive, backgroundColor: UIColor.fb_darkColor(), cornerRadius: 4.0, handler: {
+                [unowned self] alertView in
+                self.finishEditing()
+            })
+            alert.addButtonWithTitle("否", type: .Cancel, backgroundColor: UIColor.fb_lightColor(), cornerRadius: 4.0, handler:nil)
+            alert.transitionStyle = .Fade
+            alert.show()
+            return
+        }
         finishEditing()
     }
 
     // MARK: - private
+    private func checkDirty() -> Bool {
+        return getTextView()?.text != "" || selectedImageCount != 0
+    }
+
+    private func getCollectionView() -> UICollectionView? {
+        return (tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0)) as? FBCollectionViewTableViewCell)?.collectionView
+    }
+
+    private func getTextView() -> UITextView? {
+        return (tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 1)) as? FBTextViewTableViewCell)?.textView
+    }
+
     private func checkIsAddNewCell(indexPath: NSIndexPath) -> Bool {
         if selectedImageCount < 9 {
             return indexPath.row == selectedImageCount
@@ -237,12 +285,11 @@ class FBNewTimelineViewController: UITableViewController,
         let rowCount = CGFloat(ceil(Float(selectedImageCount + 1) / 4.0))
         selectionCellHeight = rowCount * imageCellWidth + (rowCount + 1) * imageSpace
         tableView.reloadData()
-        let cell = tableView.dequeueReusableCellWithIdentifier(FBCollectionViewTableViewCell.description(), forIndexPath: NSIndexPath(forRow: 0, inSection: 0)) as? FBCollectionViewTableViewCell
-        cell?.collectionView.reloadData()
+        getCollectionView()?.reloadData()
     }
 
     private func finishEditing() {
-        (tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 1)) as? FBTextViewTableViewCell)?.textView.endEditing(true)
+        getTextView()?.endEditing(true)
         navigationController?.dismissViewControllerAnimated(true, completion: nil)
     }
 }

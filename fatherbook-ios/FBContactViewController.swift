@@ -68,7 +68,7 @@ class FBContactViewController: UITableViewController {
                     self.tableView.reloadData()
                 })
                 alert.addButtonWithTitle("否", type: .Cancel, backgroundColor: UIColor.fb_lightColor(), cornerRadius: 4.0, handler:nil)
-                alert.transitionStyle = .DropDown
+                alert.transitionStyle = .Fade
                 alert.show()
             default:
                 break
